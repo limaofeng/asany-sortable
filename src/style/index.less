@@ -1,0 +1,41 @@
+.sortable-container {
+  display: flex;
+  &.sortable-list-horizontal {
+    .sortable-flipper {
+      flex-direction: row;
+    }
+  }
+  &.sortable-grid-horizontal {
+    .sortable-flipper {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+  &.sortable-list-vertical {
+    .sortable-flipper {
+      flex-direction: column;
+    }
+  }
+  &.sortable-grid-vertical {
+    .sortable-flipper {
+      flex-direction: column;
+      flex-wrap: wrap;
+    }
+  }
+  .sortable-flipper {
+    display: flex;
+    flex: 1;
+  }
+  .sortable-item-dragging {
+    position: relative;
+    &::after {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: block;
+      content: '';
+    }
+  }
+}

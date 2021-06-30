@@ -1,0 +1,80 @@
+{
+  "version": "0.1.0",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "name": "asany-sortable",
+  "author": "李茂峰",
+  "module": "dist/asany-sortable.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/asany-sortable.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/asany-sortable.esm.js",
+      "limit": "10 KB"
+    }
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.14.6",
+    "@size-limit/preset-small-lib": "^5.0.1",
+    "@storybook/addon-essentials": "^6.3.1",
+    "@storybook/addon-info": "^5.3.21",
+    "@storybook/addon-links": "^6.3.1",
+    "@storybook/addons": "^6.3.1",
+    "@storybook/react": "^6.3.1",
+    "@types/lodash": "^4.14.170",
+    "@types/react": "^17.0.11",
+    "@types/react-dom": "^17.0.8",
+    "@types/react-is": "^17.0.1",
+    "babel-loader": "^8.2.2",
+    "husky": "^6.0.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-is": "^17.0.2",
+    "size-limit": "^5.0.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.3.0",
+    "typescript": "^4.3.4"
+  },
+  "dependencies": {
+    "immutability-helper": "^3.1.1",
+    "lodash": "^4.17.21",
+    "react-dnd": "^14.0.2",
+    "react-dnd-html5-backend": "^14.0.0",
+    "react-flip-toolkit": "^7.0.13"
+  }
+}
