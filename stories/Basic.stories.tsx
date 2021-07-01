@@ -1,16 +1,11 @@
-import React, {
-  forwardRef,
-  useState,
-  MutableRefObject,
-  RefObject,
-} from 'react';
+import React, { forwardRef, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import AsanySortable, { SortableProps, SortableItemProps } from '../src';
 
 const meta: Meta = {
-  title: 'Welcome',
+  title: 'Demos/Basic',
   component: AsanySortable,
   argTypes: {
     children: {
@@ -29,26 +24,21 @@ export default meta;
 const defaultStyle = {
   border: '1px dashed gray',
   padding: '0.5rem 1rem',
+  marginRight: '.5rem',
   marginBottom: '.5rem',
   backgroundColor: 'white',
+  width: 100,
+  height: 50,
+  lineHeight: '38px',
 };
 
-const SortItem = forwardRef(
-  (
-    { data, remove, update, style, drag, className }: SortableItemProps<any>,
-    ref: any
-  ) => {
+const SortItem = forwardRef(({ data, remove, update, style, drag, className }: SortableItemProps<any>, ref: any) => {
     return (
-      <li
-        className={className}
-        style={{ ...defaultStyle, ...style }}
-        ref={drag(ref)}
-      >
+      <li className={className} style={{ ...defaultStyle, ...style }} ref={drag(ref)} >
         {data.name}
       </li>
     );
-  }
-);
+});
 
 const Template: Story<SortableProps> = (args) => {
   const [items, setItems] = useState([
@@ -70,6 +60,7 @@ const Template: Story<SortableProps> = (args) => {
       <AsanySortable
         accept={['sortable-card']}
         tag="ul"
+        style={{ listStyle: 'none', padding: 0 }}
         items={items}
         onChange={handleChange}
         itemRender={SortItem}
@@ -80,6 +71,6 @@ const Template: Story<SortableProps> = (args) => {
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
-export const Default = Template.bind({});
+export const Basic = Template.bind({});
 
-Default.args = {};
+Basic.args = {};
