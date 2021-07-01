@@ -13,6 +13,7 @@ const meta: Meta = {
       options: ['vertical', 'horizontal'],
       control: { type: 'radio' },
     },
+    onChange: { action: 'changed' },
   },
   parameters: {
     controls: { expanded: true },
@@ -57,9 +58,10 @@ const Template: Story<SortableProps> = (args) => {
     { id: '7', name: '王七', type: 'sortable-card' },
   ]);
 
-  const handleChange = (data) => {
+  const handleChange = (data, event) => {
     console.log('handleChange', data);
     setItems(data);
+    args.onChange(data, event);
   };
   return (
     <DndProvider backend={HTML5Backend}>

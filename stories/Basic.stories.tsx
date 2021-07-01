@@ -8,11 +8,7 @@ const meta: Meta = {
   title: 'Demos/Basic',
   component: AsanySortable,
   argTypes: {
-    children: {
-      control: {
-        type: 'text',
-      },
-    },
+    onChange: { action: 'changed' },
   },
   parameters: {
     controls: { expanded: true },
@@ -24,23 +20,29 @@ export default meta;
 const defaultStyle = {
   border: '1px dashed gray',
   padding: '0.5rem 1rem',
-  marginRight: '.5rem',
   marginBottom: '.5rem',
+  marginRight: '.5rem',
   backgroundColor: 'white',
-  width: 100,
-  height: 50,
-  lineHeight: '38px',
 };
 
-const SortItem = forwardRef(({ data, remove, update, style, drag, className }: SortableItemProps<any>, ref: any) => {
+const SortItem = forwardRef(
+  (
+    { data, remove, update, style, drag, className }: SortableItemProps<any>,
+    ref: any
+  ) => {
     return (
-      <li className={className} style={{ ...defaultStyle, ...style }} ref={drag(ref)} >
+      <li
+        className={className}
+        style={{ ...defaultStyle, ...style }}
+        ref={drag(ref)}
+      >
         {data.name}
       </li>
     );
-});
+  }
+);
 
-const Template: Story<SortableProps> = (args) => {
+const Template: Story<any> = (args) => {
   const [items, setItems] = useState([
     { id: '1', name: '小明', type: 'sortable-card' },
     { id: '2', name: '陈二', type: 'sortable-card' },
@@ -51,8 +53,8 @@ const Template: Story<SortableProps> = (args) => {
     { id: '7', name: '王七', type: 'sortable-card' },
   ]);
 
-  const handleChange = (data) => {
-    console.log('handleChange', data);
+  const handleChange = (data, event) => {
+    args.onChange(data, event);
     setItems(data);
   };
   return (

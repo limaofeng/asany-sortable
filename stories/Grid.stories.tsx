@@ -15,6 +15,7 @@ const meta: Meta = {
       options: ['grid', 'list'],
       control: { type: 'radio' },
     },
+    onChange: { action: 'changed' },
   },
   parameters: {
     controls: { expanded: true },
@@ -31,9 +32,9 @@ const defaultStyle = {
   backgroundColor: 'white',
 };
 
-const SortItem = forwardRef(({ data, remove, update, style, drag, ...props }: SortableItemProps<any>, ref: any) => {
+const SortItem = forwardRef(({ data, remove, update, style, drag }: SortableItemProps<any>, ref: any) => {
   return (
-    <li {...props} style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
+    <li style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
       {data.name}
     </li>
   );
@@ -42,8 +43,8 @@ const SortItem = forwardRef(({ data, remove, update, style, drag, ...props }: So
 const Template: Story<SortableProps> = (args) => {
   const [items, setItems] = useState(heros.map((name, id) => ({ id: String(id), name, type: 'sortable-card' })));
 
-  const handleChange = (data) => {
-    console.log('handleChange', data);
+  const handleChange = (data, event) => {
+    args.onChange(data, event);
     setItems(data);
   };
   return (
