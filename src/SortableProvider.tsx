@@ -85,7 +85,9 @@ export const useSortableStore = () => useContext(SortableStoreContext);
 function useStore(items: ISortableItem[]): ISortableContext {
   const prevStore = useSortableStore();
   const [SORTABLE_ID] = useState(generateUUID());
-  const [state, dispatch] = useReducer<React.ReducerWithoutAction<ISortableState>>(
+  const [state, dispatch] = useReducer<
+    React.ReducerWithoutAction<ISortableState>
+  >(
     ((state: ISortableState, action: SortableAction): ISortableState => {
       if (action.type === SortableActionType.UPDATE_ID) {
         return update(state, {

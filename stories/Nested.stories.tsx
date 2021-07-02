@@ -8,11 +8,11 @@ const meta: Meta = {
   title: 'Demos/Nested',
   component: AsanySortable,
   argTypes: {
-    layout: {
-      defaultValue: 'grid',
-      options: ['grid', 'list'],
-      control: { type: 'radio' },
-    },
+    // layout: {
+    //   defaultValue: 'grid',
+    //   options: ['grid', 'list'],
+    //   control: { type: 'radio' },
+    // },
     onDrag: { action: 'draged' },
     onDrop: { action: 'droped' },
     onSort: { action: 'sorted' },

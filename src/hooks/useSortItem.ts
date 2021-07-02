@@ -99,7 +99,6 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
   }, []);
 
   useEffect(() => {
-    // console.log('useSortItem register', data.id);
     dispatch({
       type: SortableActionType.register,
       payload: {
@@ -140,6 +139,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
       });
     },
     end: (item, monitor) => {
+      console.log('useStore', sortableId, data);
       const result = monitor.getDropResult();
       if (result?.type === 'sort') {
         return;

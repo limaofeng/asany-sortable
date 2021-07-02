@@ -41,7 +41,6 @@ interface SortableContainerTemp {
 type MoveArgs = [string, string, Relation];
 
 interface SortableContainerProps {
-  droppable: boolean;
   accept: string[];
   style?: CSSProperties;
   tag: SortableTag;
@@ -185,7 +184,9 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
       });
       return { type: 'sort', sortable: id, id: item.id };
     },
-    collect: (monitor: DropTargetMonitor<ISortableItemInternalData, SortableDropResult>) => {
+    collect: (
+      monitor: DropTargetMonitor<ISortableItemInternalData, SortableDropResult>
+    ) => {
       const data = {
         item: monitor.getItem(),
         isOver: monitor.isOver(),
@@ -246,13 +247,17 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
         layout,
         direction
       );
+      if (!item._originalSortable) {
+        item._registered = id;
+      }
       moveIn(insertIndex, item);
+    } else if (!item._originalSortable && item._registered == id) {
+      moveOut(item);
     } else if (
       !item._originalSortable?.startsWith(rootId) &&
       item._sortable == rootId &&
       rootId == id
     ) {
-      // console.log('isOverCurrent moveOut', id, item);
       moveOut(item);
     }
   }, [isOverCurrent]);

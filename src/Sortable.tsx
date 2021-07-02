@@ -92,7 +92,6 @@ function Sortable(
     | null
 ) {
   const {
-    droppable = false,
     onChange,
     onClick,
     tag = 'div',
@@ -113,7 +112,6 @@ function Sortable(
   return (
     <SortableProvider items={items} deps={[layout, tag, direction, className]}>
       <SortableCore
-        droppable={droppable}
         tag={tag}
         ref={ref}
         onClick={onClick}
@@ -135,7 +133,6 @@ function Sortable(
 
 interface SortableCoreProps {
   itemRender: SortableItemContentRender;
-  droppable: boolean;
   direction: SortableDirection;
   layout: SortableLayout;
   accept: string[];

@@ -67,6 +67,7 @@ export interface ISortableItem extends DragObjectWithType {
 export interface ISortableItemInternalData extends ISortableItem {
   _originalSortable: string;
   _sortable?: string;
+  _registered: string;
   _rect?: DOMRect;
 }
 
@@ -238,10 +239,6 @@ export interface ISortableState {
 export type Relation = 'before' | 'after' | 'none';
 
 export interface SortableProps {
-  /**
-   * 支持拖入 React-Dnd 的 type
-   */
-  droppable?: boolean;
   /**
    * 方向
    */

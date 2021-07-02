@@ -10,10 +10,10 @@ const meta: Meta = {
   title: 'Demos/Droppable',
   component: AsanySortable,
   argTypes: {
-    layout: {
-      defaultValue: 'grid',
-      options: ['grid', 'list'],
-      control: { type: 'radio' },
+    accept: {
+      defaultValue: 'default',
+      options: ['default', 'heros'],
+      control: { type: 'select' },
     },
     onChange: { action: 'changed' },
     onDrop: { action: 'droped' },
@@ -34,28 +34,30 @@ const defaultStyle = {
 };
 
 const data = [
+  { id: '2', name: '老王', type: 'default' },
+  { id: '3', name: '老五', type: 'default' },
   {
     id: '1',
     name: '荣耀',
     type: 'card-box',
+    accept: ['default'],
     children: [
-      { id: '11', name: '鲁班7号', type: 'sortable-card' },
-      { id: '12', name: '廉颇', type: 'sortable-card' },
-      { id: '13', name: '凯', type: 'sortable-card' },
+      { id: '11', name: '鲁班7号', type: 'default' },
+      { id: '12', name: '廉颇', type: 'default' },
+      { id: '13', name: '凯', type: 'default' },
       {
         id: '14',
-        name: '长城守卫军',
+        name: '长城守卫军 (HEROS + DEFAULT)',
         type: 'card-box',
-        children: [{ id: '15', name: '苏烈', type: 'sortable-card' }],
+        accept: ['heros', 'default'],
+        children: [{ id: '15', name: '苏烈', type: 'default' }],
       },
     ],
   },
-  { id: '2', name: '老王', type: 'sortable-card' },
-  { id: '3', name: '老五', type: 'sortable-card' },
-  { id: '4', name: '张三', type: 'sortable-card' },
-  { id: '5', name: '赵六', type: 'sortable-card' },
-  { id: '6', name: '李七', type: 'sortable-card' },
-  { id: '7', name: '王者营地', type: 'card-box' },
+  { id: '4', name: '张三', type: 'default' },
+  { id: '5', name: '赵六', type: 'default' },
+  { id: '6', name: '李七', type: 'default' },
+  { id: '7', name: '王者营地 (HEROS)', type: 'card-box', accept: ['heros'] },
 ];
 
 function generateUUID() {
@@ -71,16 +73,16 @@ function Dragme() {
   const ref = useRef<any>();
 
   const [names, setNames] = useState(heros);
-  const item = { id: generateUUID(), type: 'sortable-card' };
+  const item = { id: generateUUID(), type: Droppable.args.accept };
   const [, drag] = useDrag({
     canDrag() {
       return !!names.length;
     },
-    type: 'sortable-card',
+    type: Droppable.args.accept,
     item: () => {
       return {
         ...item,
-        name: names[0],
+        name: `${names[0]} - ${Droppable.args.accept}`,
         get rect() {
           return ref.current?.getBoundingClientRect();
         },
@@ -138,6 +140,7 @@ const SortItem = forwardRef(function (
   if (data.type == 'card-box') {
     return (
       <NestedSortable
+        accept={data.accept}
         tag={
           <InternalContainer
             itemData={data}
@@ -162,13 +165,18 @@ const SortItem = forwardRef(function (
   );
 });
 
-const NestedSortable = ({ tag = 'ul', items, onChange: handleChange }: any) => {
+const NestedSortable = ({
+  tag = 'ul',
+  accept = [],
+  items,
+  onChange: handleChange,
+}: any) => {
   return (
     <AsanySortable
       items={items}
+      accept={accept}
       itemRender={SortItem}
       style={{ listStyle: 'none', padding: 0 }}
-      accept={['sortable-card', 'card-box']}
       tag={tag}
       onChange={handleChange}
     />
@@ -190,7 +198,11 @@ const Template: Story<SortableProps> = (args) => {
     <DndProvider backend={HTML5Backend}>
       <Dragme />
       <br />
-      <NestedSortable items={items} onChange={handleChange} />
+      <NestedSortable
+        accept={['default']}
+        items={items}
+        onChange={handleChange}
+      />
     </DndProvider>
   );
 };
