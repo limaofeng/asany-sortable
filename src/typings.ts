@@ -8,7 +8,7 @@ export type SortableLayout = 'list' | 'grid';
 
 export type SortableDispatchEvent = (type: SortableEventType, payload?: any) => void;
 
-export type SortableTag = 'ul' | 'div' | FunctionComponent<any>;
+export type SortableTag = 'ul' | 'div' | FunctionComponent<any> | React.ReactElement;
 
 export enum SortableEventType {
   CHANGE = 'change',

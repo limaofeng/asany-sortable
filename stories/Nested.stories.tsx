@@ -50,33 +50,57 @@ const data = [
   { id: '7', name: '王者营地', type: 'card-box' },
 ];
 
+const InternalContainer = forwardRef(
+  (
+    { itemRef, itemClassName, itemStyle, itemData, children, ...props }: any,
+    boxRef: any
+  ) => {
+    return (
+      <li
+        className={itemClassName}
+        style={{ ...defaultStyle, ...itemStyle, padding: 0 }}
+        ref={itemRef}
+      >
+        <span ref={boxRef} style={{ display: 'block', padding: '0.5rem 1rem' }}>
+          {itemData.name}
+          <ul {...props}>{children}</ul>
+        </span>
+      </li>
+    );
+  }
+);
+
 const SortItem = forwardRef(function (
   { data, style, drag, className, update }: any,
-  ref: any
+  itemRef: any
 ) {
-  const [items, setItems] = useState(data.children);
+  const [items, setItems] = useState(data.children || []);
   const handleChange = (values, event) => {
     setItems(values);
     update({ ...data, children: values });
   };
 
+  drag(itemRef);
+
   if (data.type == 'card-box') {
     return (
-      <li
-        className={className}
-        style={{ ...defaultStyle, ...style }}
-        ref={drag(ref)}
-      >
-        <span style={{ display: 'block', marginBottom: 15, marginTop: 5 }}>
-          {data.name}
-        </span>
-        <NestedSortable items={items} onChange={handleChange} />
-      </li>
+      <NestedSortable
+        tag={
+          <InternalContainer
+            itemData={data}
+            itemRef={itemRef}
+            itemClassName={className}
+            itemStyle={style}
+          />
+        }
+        items={items}
+        onChange={handleChange}
+      />
     );
   }
   return (
     <li
-      ref={drag(ref)}
+      ref={itemRef}
       className={className}
       style={{ ...defaultStyle, ...style }}
     >
@@ -85,14 +109,14 @@ const SortItem = forwardRef(function (
   );
 });
 
-const NestedSortable = ({ items, onChange: handleChange }) => {
+const NestedSortable = ({ tag = 'ul', items, onChange: handleChange }: any) => {
   return (
     <AsanySortable
       items={items}
       itemRender={SortItem}
-      style={{ listStyle: 'none', padding: 0, minHeight: 100 }}
+      style={{ listStyle: 'none', padding: 0 }}
       accept={['sortable-card', 'card-box']}
-      tag="ul"
+      tag={tag}
       onChange={handleChange}
     />
   );

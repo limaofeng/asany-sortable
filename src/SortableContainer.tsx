@@ -2,6 +2,7 @@ import classnames from 'classnames';
 import { isEqual } from 'lodash';
 import React, { CSSProperties, useCallback, useEffect, useRef } from 'react';
 import { DropTargetMonitor, useDrop, XYCoord } from 'react-dnd';
+import { isElement } from 'react-is';
 
 import useSortableSelector, {
   useEventManager,
@@ -235,7 +236,6 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     if (isOverCurrent && id === item._sortable) {
       return;
     }
-    // console.log('isOverCurrent', id, isOverCurrent, item);
     const [rootId] = id.split('/');
     if (isOverCurrent) {
       const insertIndex = getInsertIndex(
@@ -246,7 +246,6 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
         layout,
         direction
       );
-      // console.log('isOverCurrent', id, 'insertIndex', insertIndex);
       moveIn(insertIndex, item);
     } else if (
       !item._originalSortable?.startsWith(rootId) &&
@@ -262,8 +261,16 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
   if (canDrop) {
     backgroundColor = 'rgba(68, 171, 255, 0.05)';
   }
-
-  return React.createElement(tag, {
+  if (isElement(tag)) {
+    return React.cloneElement(tag as any, {
+      ref: drop(buildExternalRef(ref)),
+      children,
+      className: classnames(className),
+      onClick: onClick,
+      style: { ...style, backgroundColor },
+    });
+  }
+  return React.createElement(tag as any, {
     ref: drop(buildExternalRef(ref)),
     children,
     className: classnames(className),

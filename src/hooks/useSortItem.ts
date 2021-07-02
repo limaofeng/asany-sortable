@@ -130,8 +130,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     item: () => {
       return (dataRef.current = {
         ...data,
-        deleteable:
-          typeof data.deleteable === 'boolean' ? data.deleteable : true,
+        deleteable: typeof data.deleteable === 'boolean' && data.deleteable,
         _originalSortable: sortableId,
         _sortable: sortableId,
         get _rect() {
@@ -169,7 +168,6 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     if (!isDragging || !!dragging) {
       return;
     }
-    // console.log('handleReset isDragging', data.id);
     events.emit(SortableActionType.dragging, dataRef.current);
   }, [isDragging]);
 
@@ -193,6 +191,8 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     });
   }, [sortableId]);
 
+  console.log('handleReset isDragging', isDragging);
+  
   return [
     {
       isDragging,

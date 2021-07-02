@@ -111,7 +111,7 @@ function Sortable(
   );
 
   return (
-    <SortableProvider items={items} deps={[layout, direction, className]}>
+    <SortableProvider items={items} deps={[layout, tag, direction, className]}>
       <SortableCore
         droppable={droppable}
         tag={tag}
