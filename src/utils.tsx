@@ -1,5 +1,10 @@
 import { DropTargetMonitor, XYCoord } from 'react-dnd';
-import { ISortableItemInternalData, SortableLayout, SortableDirection, Relation } from './typings';
+import {
+  ISortableItemInternalData,
+  SortableLayout,
+  SortableDirection,
+  Relation,
+} from './typings';
 
 export interface ICoord {
   top: number;
@@ -67,8 +72,11 @@ export function getMonitorCoord(
         if (detection === 'vertical') {
           const bottom = top + height;
           const midline = y + h / 2;
-          const isBefore = (bottom < midline && bottom > y) || (top < midline && top > y);
-          const isAfter = (bottom > midline && bottom < y + h) || (top > midline && top < y + h);
+          const isBefore =
+            (bottom < midline && bottom > y) || (top < midline && top > y);
+          const isAfter =
+            (bottom > midline && bottom < y + h) ||
+            (top > midline && top < y + h);
 
           if (top < 0) {
             return 'before';
@@ -85,8 +93,11 @@ export function getMonitorCoord(
           const right = left + width;
           const midline = x + w / 2;
 
-          const isBefore = (right < midline && right > x) || (left < midline && left > x);
-          const isAfter = (right > midline && right < x + w) || (left > midline && left < x + w);
+          const isBefore =
+            (right < midline && right > x) || (left < midline && left > x);
+          const isAfter =
+            (right > midline && right < x + w) ||
+            (left > midline && left < x + w);
 
           if (left < 0) {
             return 'before';
@@ -107,7 +118,10 @@ export function getMonitorCoord(
   };
 }
 
-export function getItemCoord(layout: React.RefObject<HTMLDivElement>, item: ISortableItemInternalData) {
+export function getItemCoord(
+  layout: React.RefObject<HTMLDivElement>,
+  item: ISortableItemInternalData
+) {
   const layoutRect = layout.current!.getBoundingClientRect();
   const itemRect = item._rect!;
   const top = itemRect.top - layoutRect.top;
@@ -116,8 +130,16 @@ export function getItemCoord(layout: React.RefObject<HTMLDivElement>, item: ISor
     top,
     left,
     itemRect: itemRect.height,
-    compare(other: ICoord, layout: SortableLayout, detection: SortableDirection): Relation {
-      return other.direction({ y: top, x: left, h: itemRect.height, w: itemRect.width }, layout, detection);
+    compare(
+      other: ICoord,
+      layout: SortableLayout,
+      detection: SortableDirection
+    ): Relation {
+      return other.direction(
+        { y: top, x: left, h: itemRect.height, w: itemRect.width },
+        layout,
+        detection
+      );
     },
   };
 }
