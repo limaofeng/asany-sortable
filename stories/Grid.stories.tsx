@@ -9,6 +9,14 @@ import heros from './heros.json';
 const meta: Meta = {
   title: 'Demos/Grid',
   component: AsanySortable,
+  argTypes: {
+    layout: {
+      defaultValue: 'grid',
+      options: ['grid', 'list'],
+      control: { type: 'radio' },
+    },
+    onChange: { action: 'changed' },
+  },
   parameters: {
     controls: { expanded: true },
   },
@@ -43,6 +51,7 @@ const Template: Story<SortableProps> = (args) => {
     args.onChange(data, event);
     setItems(data);
   };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <AsanySortable
@@ -52,6 +61,7 @@ const Template: Story<SortableProps> = (args) => {
         items={items}
         onChange={handleChange}
         itemRender={SortItem}
+        layout={args.layout}
       />
     </DndProvider>
   );
