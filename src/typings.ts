@@ -1,14 +1,27 @@
 import { EventEmitter } from 'events';
-import { CSSProperties, FunctionComponent, MutableRefObject, RefCallback, RefObject } from 'react';
+import {
+  CSSProperties,
+  FunctionComponent,
+  MutableRefObject,
+  RefCallback,
+  RefObject,
+} from 'react';
 import { DropTargetMonitor } from 'react-dnd';
 
 export type SortableDirection = 'horizontal' | 'vertical';
 
 export type SortableLayout = 'list' | 'grid';
 
-export type SortableDispatchEvent = (type: SortableEventType, payload?: any) => void;
+export type SortableDispatchEvent = (
+  type: SortableEventType,
+  payload?: any
+) => void;
 
-export type SortableTag = 'ul' | 'div' | FunctionComponent<any> | React.ReactElement;
+export type SortableTag =
+  | 'ul'
+  | 'div'
+  | FunctionComponent<any>
+  | React.ReactElement;
 
 export enum SortableEventType {
   CHANGE = 'change',
@@ -40,11 +53,10 @@ export enum SortableChangeEventType {
   /**
    * 更新
    */
-  UPDATE = 'update'
+  UPDATE = 'update',
 }
 
-export interface DragObjectWithType {
-}
+export interface DragObjectWithType {}
 
 export interface ISortableItem extends DragObjectWithType {
   id: string;
@@ -137,14 +149,23 @@ export enum SortableActionType {
   init = 'init',
   register = 'register',
   UPDATE_ID = 'UPDATE_ID',
-  drop = 'drop',
+  // 更新状态
   update = 'update',
+  // 移动
   move = 'move',
+  // 移入
   moveIn = 'moveIn',
+  // 移出
   moveOut = 'moveOut',
+  // 删除
   remove = 'remove',
+  // 重置数据
   reset = 'reset',
+  // 拖拽开始
   dragging = 'dragging',
+  // 结束
+  drop = 'drop',
+  // Flipper 动画使用
   moving = 'moving',
 }
 
@@ -159,7 +180,9 @@ export type SortableSubscribeCallback = () => void;
 
 export type SortableDispatchWithoutAction = (action: SortableAction) => void;
 
-export type SortableSubscribeFunc = (callback: SortableSubscribeCallback) => SortableUnsubscribeFunc;
+export type SortableSubscribeFunc = (
+  callback: SortableSubscribeCallback
+) => SortableUnsubscribeFunc;
 
 export interface ISortableContext {
   eventEmitter: EventEmitter;
@@ -168,7 +191,10 @@ export interface ISortableContext {
   dispatch: SortableDispatchWithoutAction;
 }
 
-export type SortableChange = (value: ISortableItem[], event: SortableChangeEvent) => void;
+export type SortableChange = (
+  value: ISortableItem[],
+  event: SortableChangeEvent
+) => void;
 
 export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
   data: T;
@@ -181,7 +207,10 @@ export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
 
 export type SortableItemContentRenderFunc = (
   props: SortableItemProps,
-  ref: MutableRefObject<HTMLElement | null> | ((instance: HTMLElement | null) => void) | null
+  ref:
+    | MutableRefObject<HTMLElement | null>
+    | ((instance: HTMLElement | null) => void)
+    | null
 ) => React.ReactElement;
 
 export type SortableItemContentRender = React.ForwardRefExoticComponent<

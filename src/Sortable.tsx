@@ -165,9 +165,12 @@ const SortableCore = React.forwardRef(function (
   temp.current.items = items;
 
   const handleChange = useCallback((event: SortableChangeEvent) => {
-    const { items } = temp.current;
+    let { items } = temp.current;
     if (!onChange) {
       return;
+    }
+    if (event.type == 'remove') {
+      items = items.filter((item) => item.id != event.item.id);
     }
     onChange(
       items.map(({ _originalSortable, _sortable, _rect, ...item }) => item),
@@ -182,7 +185,7 @@ const SortableCore = React.forwardRef(function (
       return;
     }
     item._sortable = item._originalSortable;
-    dispatch({ type: SortableActionType.remove, payload: item });
+    dispatch({ type: SortableActionType.moveOut, payload: item });
   }, []);
 
   const handleRemove = useCallback((event: SortableRemoveEvent) => {
@@ -201,10 +204,9 @@ const SortableCore = React.forwardRef(function (
     const { id } = temp.current;
     const { source, target } = event;
     if (source == id) {
-      dispatch({ type: SortableActionType.remove, payload: event.item });
+      dispatch({ type: SortableActionType.moveOut, payload: event.item });
     } else if (target == id) {
       event.item._sortable = id;
-      // console.log('isOverCurrent handleMoveIn', id, event);
       dispatch({
         type: SortableActionType.moveIn,
         payload: {
@@ -220,7 +222,7 @@ const SortableCore = React.forwardRef(function (
     const { source, target } = event;
     if (source == target && source == id) {
       handleChange({ ...event, type: SortableChangeEventType.SORT });
-    } else if (source == id) {
+    } else if (source == id && target) {
       handleChange({ ...event, type: SortableChangeEventType.DRAG });
     } else if (target == id) {
       handleChange({ ...event, type: SortableChangeEventType.DROP });

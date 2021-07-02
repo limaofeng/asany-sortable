@@ -130,7 +130,8 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     item: () => {
       return (dataRef.current = {
         ...data,
-        deleteable: typeof data.deleteable === 'boolean' && data.deleteable,
+        deleteable:
+          typeof data.deleteable === 'boolean' ? data.deleteable : true,
         _originalSortable: sortableId,
         _sortable: sortableId,
         get _rect() {
@@ -148,6 +149,11 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
           item,
           target: item!._sortable,
           source: item!._originalSortable,
+        });
+        events.emit(SortableActionType.drop, {
+          item,
+          target: null,
+          source: item._originalSortable,
         });
         return;
       }

@@ -16,11 +16,27 @@ const meta: Meta = {
     onDrag: { action: 'draged' },
     onDrop: { action: 'droped' },
     onSort: { action: 'sorted' },
+    onRemove: { action: 'removed' },
     onChange: { action: 'changed' },
   },
   parameters: {
     controls: { expanded: true },
   },
+};
+
+const dispatchAction = (data, event) => {
+  switch (event.type) {
+    case 'update':
+      return Nested.args.onChange(data, event);
+    case 'drop':
+      return Nested.args.onDrop(data, event);
+    case 'drag':
+      return Nested.args.onDrag(data, event);
+    case 'sort':
+      return Nested.args.onSort(data, event);
+    case 'remove':
+      return Nested.args.onRemove(data, event);
+  }
 };
 
 export default meta;
@@ -57,19 +73,6 @@ const data = [
   { id: '6', name: '李七', type: 'sortable-card' },
   { id: '7', name: '王者营地', type: 'card-box' },
 ];
-
-const dispatchAction = (data, event) => {
-  switch (event.type) {
-    case 'update':
-      return Nested.args.onChange(data, event);
-    case 'drop':
-      return Nested.args.onDrop(data, event);
-    case 'drag':
-      return Nested.args.onDrag(data, event);
-    case 'sort':
-      return Nested.args.onSort(data, event);
-  }
-};
 
 const InternalContainer = forwardRef(
   (

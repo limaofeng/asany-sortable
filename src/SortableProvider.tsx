@@ -1,4 +1,12 @@
-import React, { useCallback, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 import { EventEmitter } from 'events';
 import update from 'immutability-helper';
 import {
@@ -36,7 +44,10 @@ export const useSortableDispatch = () => {
 };
 
 export type Selector<Selected> = (state: ISortableState) => Selected;
-export type EqualityFn<Selected> = (theNew: Selected, latest: Selected) => boolean;
+export type EqualityFn<Selected> = (
+  theNew: Selected,
+  latest: Selected
+) => boolean;
 
 const defaultEqualityFn = (a: any, b: any) => a === b;
 
@@ -76,7 +87,6 @@ function useStore(items: ISortableItem[]): ISortableContext {
   const [SORTABLE_ID] = useState(generateUUID());
   const [state, dispatch] = useReducer<React.ReducerWithoutAction<ISortableState>>(
     ((state: ISortableState, action: SortableAction): ISortableState => {
-      // console.log('Sortable State', state.id, action.type, action.payload);
       if (action.type === SortableActionType.UPDATE_ID) {
         return update(state, {
           id: {
@@ -95,7 +105,11 @@ function useStore(items: ISortableItem[]): ISortableContext {
         const { source, target, relation } = action.payload;
         const sourceIndex = items.findIndex((data) => data.id == source);
         const targetIndex = items.findIndex((data) => data.id == target);
-        if (sourceIndex == targetIndex || sourceIndex == -1 || targetIndex == -1) {
+        if (
+          sourceIndex == targetIndex ||
+          sourceIndex == -1 ||
+          targetIndex == -1
+        ) {
           return state;
         }
         if (relation === 'before' && sourceIndex < targetIndex) {
@@ -117,7 +131,10 @@ function useStore(items: ISortableItem[]): ISortableContext {
           },
         });
       }
-      if (action.type === SortableActionType.remove) {
+      if (
+        action.type === SortableActionType.remove ||
+        action.type === SortableActionType.moveOut
+      ) {
         const { items } = state;
         const item = action.payload;
         const itemIndex = items.findIndex((data) => data.id == item.id);
@@ -149,7 +166,7 @@ function useStore(items: ISortableItem[]): ISortableContext {
         });
       }
       if (action.type === SortableActionType.dragging) {
-        // console.log('handleReset backup', state.id, state.backup);
+        // console.log('backup', action.type, state.id, 'setting');
         return update(state, {
           backup: {
             $set: [...state.items],
@@ -160,6 +177,7 @@ function useStore(items: ISortableItem[]): ISortableContext {
         });
       }
       if (action.type === SortableActionType.drop) {
+        // console.log('backup', action.type, state.id, 'clear');
         return update(state, {
           backup: {
             $set: [],
@@ -174,6 +192,7 @@ function useStore(items: ISortableItem[]): ISortableContext {
       }
       if (action.type === SortableActionType.reset) {
         const { items, backup } = state;
+        // console.log('backup', action.type, state.id, 'reset');
         return update(state, {
           items: {
             $set: backup.map((item) => {
@@ -244,7 +263,10 @@ function useStore(items: ISortableItem[]): ISortableContext {
     if (!parentId) {
       return;
     }
-    (dispatch as any)({ type: SortableActionType.UPDATE_ID, payload: parentId + '/' + SORTABLE_ID });
+    (dispatch as any)({
+      type: SortableActionType.UPDATE_ID,
+      payload: parentId + '/' + SORTABLE_ID,
+    });
   }, [parentId]);
 
   useEffect(() => {
@@ -252,14 +274,18 @@ function useStore(items: ISortableItem[]): ISortableContext {
     handleDispatchSubscribe();
   }, [state]);
 
-  const outside = items.map(({ _originalSortable, _sortable, _rect, ...item }: any) => item);
+  const outside = items.map(
+    ({ _originalSortable, _sortable, _rect, ...item }: any) => item
+  );
   useDeepCompareEffect(() => {
     const state = store.getState();
-    const inside = state.items.map(({ _originalSortable, _sortable, _rect, ...item }) => item);
+    const inside = state.items.map(
+      ({ _originalSortable, _sortable, _rect, ...item }) => item
+    );
     if (isEqual(inside, outside)) {
       return;
     }
-    console.log('isOverCurrent Change items', state.id);
+    // console.log('isOverCurrent Change items', state.id);
     (dispatch as any)({
       type: SortableActionType.init,
       payload: {
@@ -295,5 +321,12 @@ function useStore(items: ISortableItem[]): ISortableContext {
 export const SortableProvider = (props: SortableProviderProps) => {
   const { deps = [], items, children } = props;
   const store = useStore(items);
-  return useMemo(() => <SortableStoreContext.Provider value={store}>{children}</SortableStoreContext.Provider>, deps);
+  return useMemo(
+    () => (
+      <SortableStoreContext.Provider value={store}>
+        {children}
+      </SortableStoreContext.Provider>
+    ),
+    deps
+  );
 };

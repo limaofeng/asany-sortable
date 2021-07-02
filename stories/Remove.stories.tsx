@@ -2,12 +2,16 @@ import React, { forwardRef, useRef, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { DndProvider, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import AsanySortable, { SortableProps, SortableItemProps } from '../src';
+import AsanySortable from '../src';
 
 const meta: Meta = {
   title: 'Demos/Remove',
   component: AsanySortable,
   argTypes: {
+    onDrag: { action: 'draged' },
+    onDrop: { action: 'droped' },
+    onSort: { action: 'sorted' },
+    onRemove: { action: 'removed' },
     onChange: { action: 'changed' },
   },
   parameters: {
@@ -15,8 +19,22 @@ const meta: Meta = {
   },
 };
 
-export default meta;
+const dispatchAction = (data, event) => {
+  switch (event.type) {
+    case 'update':
+      return Remove.args.onChange(data, event);
+    case 'drop':
+      return Remove.args.onDrop(data, event);
+    case 'drag':
+      return Remove.args.onDrag(data, event);
+    case 'sort':
+      return Remove.args.onSort(data, event);
+    case 'remove':
+      return Remove.args.onRemove(data, event);
+  }
+};
 
+export default meta;
 
 const defaultStyle = {
   border: '1px dashed gray',
@@ -36,6 +54,7 @@ const nameStyle = {
 const recycledStyle = {
   width: '100%',
   height: 50,
+  paddingLeft: '1rem',
   border: '1px dashed gray',
   lineHeight: '50px',
 };
@@ -65,44 +84,51 @@ function Recycled() {
 
   return (
     <div style={{ ...recycledStyle, backgroundColor }} ref={ref}>
-      回收站(拖拽删除)
+      回收站(拖拽删除 支持 type = sortable-card 类型 的数据)
     </div>
   );
 }
 
-
 function ItemRender({ data, style, drag, className, remove }: any, ref: any) {
   const [items, setItems] = useState([
-    { id: 11, name: '鲁班7号', type: 'sortable-card' },
-    { id: 12, name: '廉颇', type: 'sortable-card' },
-    { id: 13, name: '凯', type: 'sortable-card' },
-    { id: 14, name: '苏烈', type: 'sortable-card' },
+    { id: '11', name: '鲁班7号', type: 'sortable-card' },
+    { id: '12', name: '廉颇', type: 'sortable-card' },
+    { id: '13', name: '凯', type: 'sortable-card' },
+    { id: '14', name: '苏烈', type: 'sortable-card' },
   ]);
   const handleChange = (values, event) => {
-    console.log('....', values, event);
     setItems(values);
+    dispatchAction(values, event);
   };
 
   if (data.type === 'sortable-card-2') {
     return (
-      <li className={className} style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
+      <li
+        className={className}
+        style={{ ...defaultStyle, ...style }}
+        ref={drag(ref)}
+      >
         <div style={rowStyle}>
           <span style={nameStyle}>{data.name}</span>
           <a onClick={remove}>删除</a>
         </div>
         <AsanySortable
-          style={{ minHeight: 100 }}
-          droppable={['sortable-card-2', 'sortable-card']}
+          style={{ minHeight: 100, listStyle: 'none', padding: 0 }}
+          accept={['sortable-card-2', 'sortable-card']}
           tag="ul"
           items={items}
-          itemRender={TestItemRender}
+          itemRender={ItemRender}
           onChange={handleChange}
         />
       </li>
     );
   }
   return (
-    <li ref={drag(ref)} className={className} style={{ ...defaultStyle, ...style }}>
+    <li
+      ref={drag(ref)}
+      className={className}
+      style={{ ...defaultStyle, ...style }}
+    >
       <div style={rowStyle}>
         <span style={nameStyle}>{data.name}</span>
         <a onClick={remove}>删除</a>
@@ -115,20 +141,25 @@ const Template: Story<any> = (args) => {
   const [items, setItems] = useState([
     { id: '1', name: '小明', type: 'sortable-card' },
     { id: '2', name: '陈二', type: 'sortable-card' },
-    { id: '3', name: '张三', type: 'sortable-card' },
-    { id: '4', name: '李四', type: 'sortable-card' },
-    { id: '5', name: '老五', type: 'sortable-card' },
-    { id: '6', name: '赵六', type: 'sortable-card' },
-    { id: '7', name: '王七', type: 'sortable-card' },
+    // { id: '3', name: '张三', type: 'sortable-card' },
+    // { id: '4', name: '李四', type: 'sortable-card' },
+    // { id: '5', name: '老五', type: 'sortable-card' },
+    // { id: '6', name: '赵六', type: 'sortable-card' },
+    // { id: '7', name: '王七', type: 'sortable-card' },
     { id: '8', name: '王者营地', type: 'sortable-card-2' },
   ]);
 
   const handleChange = (data, event) => {
-    args.onChange(data, event);
     setItems(data);
+    dispatchAction(data, event);
   };
+
+  Remove.args = args;
+
   return (
     <DndProvider backend={HTML5Backend}>
+      <Recycled />
+      <br />
       <AsanySortable
         accept={['sortable-card']}
         tag="ul"
