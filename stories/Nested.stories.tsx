@@ -39,7 +39,12 @@ const data = [
       { id: '11', name: '鲁班7号', type: 'sortable-card' },
       { id: '12', name: '廉颇', type: 'sortable-card' },
       { id: '13', name: '凯', type: 'sortable-card' },
-      { id: '14', name: '苏烈', type: 'sortable-card' },
+      {
+        id: '14',
+        name: '长城守卫军',
+        type: 'card-box',
+        children: [{ id: '14', name: '苏烈', type: 'sortable-card' }],
+      },
     ],
   },
   { id: '2', name: '老王', type: 'sortable-card' },
