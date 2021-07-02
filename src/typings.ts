@@ -67,7 +67,7 @@ export interface ISortableItem extends DragObjectWithType {
 export interface ISortableItemInternalData extends ISortableItem {
   _originalSortable: string;
   _sortable?: string;
-  _registered: string;
+  _registered?: string;
   _rect?: DOMRect;
 }
 
