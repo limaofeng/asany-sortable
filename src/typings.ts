@@ -37,6 +37,10 @@ export enum SortableChangeEventType {
    * 移出
    */
   DRAG = 'drag',
+  /**
+   * 更新
+   */
+  UPDATE = 'update'
 }
 
 export interface DragObjectWithType {
@@ -134,6 +138,7 @@ export enum SortableActionType {
   register = 'register',
   UPDATE_ID = 'UPDATE_ID',
   drop = 'drop',
+  update = 'update',
   move = 'move',
   moveIn = 'moveIn',
   moveOut = 'moveOut',

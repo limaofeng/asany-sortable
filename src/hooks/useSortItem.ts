@@ -174,6 +174,11 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
   const handleUpdate = useCallback(
     ({ _rect, _sortable, _originalSortable, ...item }: any) => {
       assign(dataRef.current, item);
+      events.emit(SortableActionType.update, {
+        item,
+        target: _sortable,
+        source: _originalSortable,
+      });
     },
     []
   );
@@ -191,8 +196,6 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     });
   }, [sortableId]);
 
-  console.log('handleReset isDragging', isDragging);
-  
   return [
     {
       isDragging,

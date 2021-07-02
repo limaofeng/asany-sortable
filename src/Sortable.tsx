@@ -236,6 +236,14 @@ const SortableCore = React.forwardRef(function (
     dispatch({ type: SortableActionType.reset });
   }, []);
 
+  const handleUpdate = useCallback((data) => {
+    const { items } = temp.current;
+    if (!items.some((item) => item.id == data.item.id)) {
+      return;
+    }
+    handleChange({ item: data.item, type: SortableChangeEventType.UPDATE });
+  }, []);
+
   useEffect(() => {
     events.on(SortableActionType.drop, handleDrop);
     events.on(SortableActionType.reset, handleReset);
@@ -243,6 +251,7 @@ const SortableCore = React.forwardRef(function (
     events.on(SortableActionType.moveIn, handleMoveIn);
     events.on(SortableActionType.moveOut, handleMoveOut);
     events.on(SortableActionType.dragging, handleDragging);
+    events.on(SortableActionType.update, handleUpdate);
     return () => {
       events.off(SortableActionType.drop, handleDrop);
       events.off(SortableActionType.reset, handleReset);
@@ -250,6 +259,7 @@ const SortableCore = React.forwardRef(function (
       events.off(SortableActionType.moveIn, handleMoveIn);
       events.off(SortableActionType.moveOut, handleMoveOut);
       events.off(SortableActionType.dragging, handleDragging);
+      events.off(SortableActionType.update, handleUpdate);
     };
   }, []);
 
@@ -279,5 +289,14 @@ const SortableCore = React.forwardRef(function (
     </SortableContainer>
   );
 });
+
+export const injectAnime = (props: any) => {
+  return Object.keys(props)
+    .filter((key) => key.startsWith('data-flip'))
+    .reduce((data, name) => {
+      data[name] = props[name];
+      return data;
+    }, {} as any);
+};
 
 export default React.forwardRef(Sortable);

@@ -1,11 +1,13 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, useRef, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { DndProvider } from 'react-dnd';
+import { DndProvider, useDrag } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import AsanySortable, { SortableProps } from '../src';
 
+import heros from './heros.json';
+
 const meta: Meta = {
-  title: 'Demos/Nested',
+  title: 'Demos/Droppable',
   component: AsanySortable,
   argTypes: {
     layout: {
@@ -13,10 +15,8 @@ const meta: Meta = {
       options: ['grid', 'list'],
       control: { type: 'radio' },
     },
-    onDrag: { action: 'draged' },
-    onDrop: { action: 'droped' },
-    onSort: { action: 'sorted' },
     onChange: { action: 'changed' },
+    onDrop: { action: 'droped' },
   },
   parameters: {
     controls: { expanded: true },
@@ -58,18 +58,49 @@ const data = [
   { id: '7', name: '王者营地', type: 'card-box' },
 ];
 
-const dispatchAction = (data, event) => {
-  switch (event.type) {
-    case 'update':
-      return Nested.args.onChange(data, event);
-    case 'drop':
-      return Nested.args.onDrop(data, event);
-    case 'drag':
-      return Nested.args.onDrag(data, event);
-    case 'sort':
-      return Nested.args.onSort(data, event);
-  }
-};
+function generateUUID() {
+  return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c: any) =>
+    (
+      c ^
+      (crypto.getRandomValues(new Uint32Array(1))[0] & (15 >> (c / 4)))
+    ).toString(16)
+  );
+}
+
+function Dragme() {
+  const ref = useRef<any>();
+
+  const [names, setNames] = useState(heros);
+  const item = { id: generateUUID(), type: 'sortable-card' };
+  const [, drag] = useDrag({
+    canDrag() {
+      return !!names.length;
+    },
+    type: 'sortable-card',
+    item: () => {
+      return {
+        ...item,
+        name: names[0],
+        get rect() {
+          return ref.current?.getBoundingClientRect();
+        },
+      };
+    },
+    end(_, monitor) {
+      const result = monitor.getDropResult();
+      if (!result) {
+        return;
+      }
+      Droppable.args.onDrop(result);
+      names.shift();
+      setNames([...names]);
+    },
+    collect: (monitor: any) => ({
+      opacity: monitor.isDragging() ? 0.4 : 1,
+    }),
+  });
+  return <div ref={drag(ref) as any}>英雄池({names.length})</div>;
+}
 
 const InternalContainer = forwardRef(
   (
@@ -98,8 +129,8 @@ const SortItem = forwardRef(function (
   const [items, setItems] = useState(data.children || []);
   const handleChange = (values, event) => {
     setItems(values);
+    Droppable.args.onChange(values, event);
     update({ ...data, children: values });
-    dispatchAction(data, event);
   };
 
   drag(itemRef);
@@ -148,14 +179,17 @@ const Template: Story<SortableProps> = (args) => {
   const [items, setItems] = useState(data);
 
   const handleChange = (data, event) => {
+    console.log('handleChange', data);
     setItems(data);
-    dispatchAction(data, event);
+    Droppable.args.onChange(data, event);
   };
 
-  Nested.args = args;
+  Droppable.args = args;
 
   return (
     <DndProvider backend={HTML5Backend}>
+      <Dragme />
+      <br />
       <NestedSortable items={items} onChange={handleChange} />
     </DndProvider>
   );
@@ -163,6 +197,6 @@ const Template: Story<SortableProps> = (args) => {
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
-export const Nested = Template.bind({});
+export const Droppable = Template.bind({});
 
-Nested.args = {};
+Droppable.args = {};
