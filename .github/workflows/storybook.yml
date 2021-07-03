@@ -1,7 +1,8 @@
 name: Deploy Storybook
-on: 
-  push:
-    paths: ["stories/**", "src/**"]
+on: [push]
+# on: 
+#   push:
+#     paths: ["stories/**", "src/**"]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -21,7 +22,7 @@ jobs:
         run: | 
           yarn build
           yarn run build-storybook
-          
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.6.2
         with:
