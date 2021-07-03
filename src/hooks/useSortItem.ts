@@ -139,7 +139,6 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
       });
     },
     end: (item, monitor) => {
-      console.log('useStore', sortableId, data);
       const result = monitor.getDropResult();
       if (result?.type === 'sort') {
         return;
