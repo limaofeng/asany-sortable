@@ -19,7 +19,8 @@
     "size": "size-limit",
     "analyze": "size-limit --why",
     "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "version": "conventional-changelog -p angular -i CHANGELOG.md -s && git add CHANGELOG.md"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -37,6 +38,10 @@
   },
   "name": "asany-sortable",
   "author": "李茂峰",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/limaofeng"
+  },
+  "repository": "https://github.com/limaofeng/asany-sortable",
   "module": "dist/asany-sortable.esm.js",
   "size-limit": [
     {
