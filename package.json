@@ -37,9 +37,6 @@
   },
   "name": "asany-sortable",
   "author": "李茂峰",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/limaofeng"
-  },
   "repository": "https://github.com/limaofeng/asany-sortable",
   "module": "dist/asany-sortable.esm.js",
   "size-limit": [

@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: 10
+        node-version: 14.x
         registry-url: https://registry.npmjs.org/
     - run: yarn
     - run: yarn publish
@@ -24,7 +24,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: 10
+        node-version: 14.x
         registry-url: https://registry.npmjs.org/
     - run: yarn global add github-release-from-changelog
     - run: github-release-from-changelog
