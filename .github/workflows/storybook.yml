@@ -1,8 +1,7 @@
 name: Deploy Storybook
-on: [push]
-# on: 
-#   push:
-#     paths: ["stories/**", "src/**"]
+on: 
+  push:
+    paths: ["stories/**", "src/**"]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
