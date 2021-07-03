@@ -12,8 +12,8 @@ jobs:
       with:
         node-version: 10
         registry-url: https://registry.npmjs.org/
-    - run: npm i
-    - run: npm publish
+    - run: yarn
+    - run: yarn publish
       env:
         NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
 
@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: 10
         registry-url: https://registry.npmjs.org/
-    - run: npm i -g github-release-from-changelog
+    - run: yarn global add github-release-from-changelog
     - run: github-release-from-changelog
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
