@@ -26,7 +26,7 @@ jobs:
       with:
         node-version: 14.x
         registry-url: https://registry.npmjs.org/
-    - run: yarn global add github-release-from-changelog && which github-release-from-changelog
+    - run: yarn global add github-release-from-changelog
     - run: which github-release-from-changelog
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
