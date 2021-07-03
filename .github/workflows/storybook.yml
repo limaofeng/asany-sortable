@@ -1,0 +1,32 @@
+name: Deploy Storybook
+on: 
+  push:
+    paths: ["stories/**", "src/**"]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Use Node ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Install deps and build (with cache)
+        uses: bahmutov/npm-install@v1
+
+      - name: Install and Build 🔧
+        run: | 
+          yarn build
+          yarn run build-storybook
+          
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.6.2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: master
+          FOLDER: storybook-static
+          CLEAN: true
+          TARGET_FOLDER: docs
