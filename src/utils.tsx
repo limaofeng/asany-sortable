@@ -55,12 +55,12 @@ export function getMonitorCoord(
       if (!isRectangleOverlap(currentRec, [x, y, x + w, y + h])) {
         return 'none';
       }
+      const x1 = x + w / 2;
+      const y1 = y + h / 2;
+      const source = getRec(itemRect, layoutRect);
+      const target = [x, y, x + w, y + h];
+      const overlap = isRectangleOverlap(currentRec, [x1, y1, x1, y1]);
       if (layout == 'grid') {
-        const x1 = x + w / 2;
-        const y1 = y + h / 2;
-        const source = getRec(itemRect, layoutRect);
-        const target = [x, y, x + w, y + h];
-        const overlap = isRectangleOverlap(currentRec, [x1, y1, x1, y1]);
         if (!overlap) {
           return 'none';
         }
@@ -68,49 +68,20 @@ export function getMonitorCoord(
           return 'after';
         }
         return 'before';
-      } else {
-        if (detection === 'vertical') {
-          const bottom = top + height;
-          const midline = y + h / 2;
-          const isBefore =
-            (bottom < midline && bottom > y) || (top < midline && top > y);
-          const isAfter =
-            (bottom > midline && bottom < y + h) ||
-            (top > midline && top < y + h);
-
-          if (top < 0) {
-            return 'before';
-          }
-          if (isBefore) {
-            return 'before';
-          }
-          if (isAfter) {
-            // console.log('交换 -- direction', top, bottom, y, midline, y + h);
-            return 'after';
-          }
-          return 'none';
+      } else if (detection === 'vertical' && (overlap as any).y) {
+        if (source[3] < target[1] || source[2] < target[0]) {
+          return 'after';
         } else {
-          const right = left + width;
-          const midline = x + w / 2;
-
-          const isBefore =
-            (right < midline && right > x) || (left < midline && left > x);
-          const isAfter =
-            (right > midline && right < x + w) ||
-            (left > midline && left < x + w);
-
-          if (left < 0) {
-            return 'before';
-          }
-          if (isBefore) {
-            return 'before';
-          }
-          if (isAfter) {
-            return 'after';
-          }
+          return 'before';
         }
-        return 'none';
+      } else if (detection === 'horizontal' && (overlap as any).x) {
+        if (source[3] < target[1] || source[2] < target[0]) {
+          return 'after';
+        } else {
+          return 'before';
+        }
       }
+      return 'none';
     },
     compare: (_: ICoord): Relation => {
       throw '未实现逻辑';
