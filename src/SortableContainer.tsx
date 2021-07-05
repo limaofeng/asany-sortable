@@ -27,8 +27,6 @@ import {
   getMonitorCoord,
 } from './utils';
 
-// import { throttle } from '../utils';
-
 interface SortableContainerTemp {
   lastLog?: SortLog;
   items: ISortableItemInternalData[];
@@ -79,6 +77,10 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
 
   const pendingUpdateFn = useRef<SortableAction>();
   const requestedFrame = useRef<any>();
+
+  const resetMoveData = useCallback(() => {
+    prevMoveData.current = ['', '', 'after'];
+  }, []);
 
   const move = useCallback(function (
     source: string,
@@ -143,6 +145,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
 
   const moveOut = useCallback((item: ISortableItemInternalData) => {
     events.emit(SortableActionType.moveOut, { item });
+    resetMoveData();
   }, []);
 
   const moveIn = useCallback(
@@ -154,6 +157,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
         target: id,
         source: item._sortable,
       });
+      resetMoveData();
     },
     []
   );

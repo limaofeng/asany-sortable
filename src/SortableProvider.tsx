@@ -99,7 +99,7 @@ function useStore(items: ISortableItem[]): ISortableContext {
       if (action.type === SortableActionType.register) {
         const data = action.payload;
         const item = state.items.find((item) => item.id == data.id)!;
-        assign(item, data);
+        item && assign(item, data);
         return { ...state };
       }
       if (action.type === SortableActionType.move) {
