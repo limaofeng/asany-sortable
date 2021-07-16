@@ -5,7 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import AsanySortable, { SortableItemProps } from '../src';
 
 const meta: Meta = {
-  title: 'Demos/Keep State',
+  title: 'Demos/状态保持',
   component: AsanySortable,
   argTypes: {
     onDrag: { action: 'draged' },
@@ -133,5 +133,7 @@ const Template: Story<any> = (args) => {
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
 export const KeepState = Template.bind({});
+
+KeepState.storyName = '状态保持';
 
 KeepState.args = {};

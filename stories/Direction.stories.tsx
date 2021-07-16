@@ -5,7 +5,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import AsanySortable, { SortableProps, SortableItemProps } from '../src';
 
 const meta: Meta = {
-  title: 'Demos/Direction',
+  title: 'Demos/排列方向',
   component: AsanySortable,
   argTypes: {
     direction: {
@@ -81,5 +81,7 @@ const Template: Story<SortableProps> = (args) => {
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
 export const Direction = Template.bind({});
+
+Direction.storyName = '排列方向';
 
 Direction.args = {};

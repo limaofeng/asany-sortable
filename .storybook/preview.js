@@ -2,7 +2,8 @@ import { configure } from '@storybook/react';
 
 const loaderFn = () => {
   const allExports = [
-    require('../stories/Introduction.stories.mdx'),
+    require('../stories/docs/Welcome.stories.mdx'),
+    require('../stories/docs/Changelog.stories.mdx'),
     require('../stories/Basic.stories.tsx'),
     require('../stories/Direction.stories.tsx'),
     require('../stories/Grid.stories.tsx'),

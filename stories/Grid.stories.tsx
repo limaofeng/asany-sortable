@@ -7,7 +7,7 @@ import AsanySortable, { SortableProps, SortableItemProps } from '../src';
 import heros from './heros.json';
 
 const meta: Meta = {
-  title: 'Demos/Grid',
+  title: 'Demos/格子',
   component: AsanySortable,
   argTypes: {
     layout: {
@@ -70,5 +70,7 @@ const Template: Story<SortableProps> = (args) => {
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
 export const Grid = Template.bind({});
+
+Grid.storyName = '格子';
 
 Grid.args = {};
