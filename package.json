@@ -35,17 +35,17 @@
     "singleQuote": true,
     "trailingComma": "es5"
   },
-  "name": "asany-sortable",
+  "name": "@asany/sortable",
   "author": "李茂峰",
   "repository": "https://github.com/limaofeng/asany-sortable",
-  "module": "dist/asany-sortable.esm.js",
+  "module": "dist/sortable.esm.js",
   "size-limit": [
     {
-      "path": "dist/asany-sortable.cjs.production.min.js",
+      "path": "dist/sortable.cjs.production.min.js",
       "limit": "10 KB"
     },
     {
-      "path": "dist/asany-sortable.esm.js",
+      "path": "dist/sortable.esm.js",
       "limit": "10 KB"
     }
   ],

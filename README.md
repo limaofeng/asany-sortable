@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-npm i asany-sortable # or yarn add asany-sortable
+npm i @asany/sortable # or yarn add @asany/sortable
 ```
 
 ## Usage
