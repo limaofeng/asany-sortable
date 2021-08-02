@@ -5,16 +5,12 @@ import { SortItemDragStartEvent } from './useSortItem';
 
 export type DragEndCallback = () => void;
 
-export type DragStartCallback = (
-  event: SortItemDragStartEvent
-) => DragEndCallback | undefined;
+export type DragStartCallback = (event: SortItemDragStartEvent) => DragEndCallback | undefined;
 
 function useSortItemDrag(id: string, callback: DragStartCallback) {
   const events = useEventManager();
 
-  const data = useSortableSelector((state) =>
-    state.items.find((item) => item.id === id)
-  );
+  const data = useSortableSelector((state) => state.items.find((item) => item.id === id));
 
   const handleDragStart = useCallback((item: ISortableItem) => {
     if (item.id !== id || !data) {

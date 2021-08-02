@@ -1,22 +1,11 @@
 import classnames from 'classnames';
 import { Flipped, Flipper } from 'react-flip-toolkit';
-import React, {
-  CSSProperties,
-  MutableRefObject,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { isForwardRef } from 'react-is';
 
 import { ItemTypes } from './ItemTypes';
 import SortableContainer from './SortableContainer';
-import useSortableSelector, {
-  SortableProvider,
-  useEventManager,
-  useSortableDispatch,
-} from './SortableProvider';
+import useSortableSelector, { SortableProvider, useEventManager, useSortableDispatch } from './SortableProvider';
 import SortItem, { SortItemProps } from './SortItem';
 import {
   ISortableItem,
@@ -39,17 +28,12 @@ import {
 
 import './style/index.less';
 
-function buildItems(
-  items: ISortableItem[] | undefined,
-  children: React.ReactNodeArray | undefined
-) {
+function buildItems(items: ISortableItem[] | undefined, children: React.ReactNodeArray | undefined) {
   if (items) {
     return items;
   }
   const retItems: ISortableItem[] = [];
-  const nodes = React.Children.toArray(
-    children
-  ) as React.ReactElement<SortItemProps>[];
+  const nodes = React.Children.toArray(children) as React.ReactElement<SortItemProps>[];
   for (let i = 0; i < nodes.length; i += 1) {
     const props = nodes[i].props;
     retItems.push({ ...props.data });
@@ -58,10 +42,7 @@ function buildItems(
 }
 
 function buildItemRender(
-  itemRender:
-    | SortableItemContentRender
-    | SortableItemContentRenderFunc
-    | undefined,
+  itemRender: SortableItemContentRender | SortableItemContentRenderFunc | undefined,
   children: React.ReactNodeArray | undefined
 ): SortableItemContentRender {
   if (!itemRender && (!children || !React.Children.count(children))) {
@@ -73,23 +54,16 @@ function buildItemRender(
     }
     return React.forwardRef((props, ref) => itemRender(props, ref));
   }
-  const nodes = React.Children.toArray(
-    children
-  ) as React.ReactElement<SortItemProps>[];
+  const nodes = React.Children.toArray(children) as React.ReactElement<SortItemProps>[];
   const tempNode = nodes[0];
-  return React.forwardRef((props, ref) =>
-    React.cloneElement(tempNode, { ...props, ref } as any)
-  );
+  return React.forwardRef((props, ref) => React.cloneElement(tempNode, { ...props, ref } as any));
 }
 
 const defaultAccept = [ItemTypes.CARD];
 
 function Sortable(
   props: SortableProps,
-  ref:
-    | MutableRefObject<HTMLElement | null>
-    | ((instance: HTMLElement | null) => void)
-    | null
+  ref: MutableRefObject<HTMLElement | null> | ((instance: HTMLElement | null) => void) | null
 ) {
   const {
     onChange,
@@ -105,9 +79,7 @@ function Sortable(
   } = props;
   const { direction = layout == 'grid' ? 'horizontal' : 'vertical' } = props;
   const items = buildItems(propsItems, children);
-  const [innerItemRender] = useState<SortableItemContentRender>(
-    buildItemRender(itemRender, children)
-  );
+  const [innerItemRender] = useState<SortableItemContentRender>(buildItemRender(itemRender, children));
 
   return (
     <SortableProvider items={items} deps={[layout, tag, direction, className]}>
@@ -115,11 +87,7 @@ function Sortable(
         tag={tag}
         ref={ref}
         onClick={onClick}
-        className={classnames(
-          'sortable-container',
-          `sortable-${layout}-${direction}`,
-          className
-        )}
+        className={classnames('sortable-container', `sortable-${layout}-${direction}`, className)}
         style={style}
         accept={accept}
         onChange={onChange}
@@ -145,10 +113,7 @@ interface SortableCoreProps {
 
 const SortableCore = React.forwardRef(function (
   { itemRender, onChange, ...props }: SortableCoreProps,
-  ref:
-    | MutableRefObject<HTMLElement | null>
-    | ((instance: HTMLElement | null) => void)
-    | null
+  ref: MutableRefObject<HTMLElement | null> | ((instance: HTMLElement | null) => void) | null
 ) {
   const items = useSortableSelector((state) => state.items);
   const id = useSortableSelector((state) => state.id);

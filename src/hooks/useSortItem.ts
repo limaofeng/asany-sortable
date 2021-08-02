@@ -1,24 +1,9 @@
-import {
-  CSSProperties,
-  RefCallback,
-  RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import { CSSProperties, RefCallback, RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDrag } from 'react-dnd';
 
 import { assign, sleep } from '../utils/index';
-import useSelector, {
-  useEventManager,
-  useSortableDispatch,
-} from '../SortableProvider';
-import {
-  ISortableItem,
-  ISortableItemInternalData,
-  SortableActionType,
-} from '../typings';
+import useSelector, { useEventManager, useSortableDispatch } from '../SortableProvider';
+import { ISortableItem, ISortableItemInternalData, SortableActionType } from '../typings';
 
 const style: React.CSSProperties = {};
 
@@ -61,23 +46,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
 
   const handleDragend = useCallback(async () => {
     const evObj = document.createEvent('MouseEvents');
-    evObj.initMouseEvent(
-      'mousemove',
-      true,
-      true,
-      window,
-      1,
-      12,
-      345,
-      7,
-      220,
-      false,
-      false,
-      true,
-      false,
-      0,
-      null
-    );
+    evObj.initMouseEvent('mousemove', true, true, window, 1, 12, 345, 7, 220, false, false, true, false, 0, null);
     for (let i = 0; i < 10; i++) {
       await sleep(50);
       document.dispatchEvent(evObj);
@@ -110,11 +79,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     });
   }, []);
 
-  const [{ isDragging }, drag, connectDrag] = useDrag<
-    ISortableItemInternalData,
-    any,
-    any
-  >({
+  const [{ isDragging }, drag, connectDrag] = useDrag<ISortableItemInternalData, any, any>({
     type: data.type,
     collect: (monitor) => {
       const item = monitor.getItem();
@@ -129,8 +94,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     item: () => {
       return (dataRef.current = {
         ...data,
-        deleteable:
-          typeof data.deleteable === 'boolean' ? data.deleteable : true,
+        deleteable: typeof data.deleteable === 'boolean' ? data.deleteable : true,
         _originalSortable: sortableId,
         _sortable: sortableId,
         get _rect() {
@@ -176,17 +140,14 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     events.emit(SortableActionType.dragging, dataRef.current);
   }, [isDragging]);
 
-  const handleUpdate = useCallback(
-    ({ _rect, _sortable, _originalSortable, ...item }: any) => {
-      assign(dataRef.current, item);
-      events.emit(SortableActionType.update, {
-        item,
-        target: _sortable,
-        source: _originalSortable,
-      });
-    },
-    []
-  );
+  const handleUpdate = useCallback(({ _rect, _sortable, _originalSortable, ...item }: any) => {
+    assign(dataRef.current, item);
+    events.emit(SortableActionType.update, {
+      item,
+      target: _sortable,
+      source: _originalSortable,
+    });
+  }, []);
 
   const handleRemove = useCallback(() => {
     const item = {
@@ -207,9 +168,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
       update: handleUpdate,
       remove: handleRemove,
       style: containerStyle,
-      className: isDragging
-        ? 'sortable-item sortable-item-dragging'
-        : 'sortable-item',
+      className: isDragging ? 'sortable-item sortable-item-dragging' : 'sortable-item',
     },
     ref,
     drag as any,

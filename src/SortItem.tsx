@@ -11,18 +11,8 @@ export interface SortItemProps {
   itemRender: SortableItemContentRender;
 }
 
-function SortItem({
-  data,
-  itemRender: ItemRender,
-  className,
-  style,
-  ...props
-}: SortItemProps) {
-  const [
-    { style: additionStyle, className: additionClassName, remove, update },
-    ref,
-    drag,
-  ] = useSortItem(data);
+function SortItem({ data, itemRender: ItemRender, className, style, ...props }: SortItemProps) {
+  const [{ style: additionStyle, className: additionClassName, remove, update }, ref, drag] = useSortItem(data);
   return (
     <ItemRender
       {...props}

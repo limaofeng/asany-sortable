@@ -1,10 +1,5 @@
 import { DropTargetMonitor, XYCoord } from 'react-dnd';
-import {
-  ISortableItemInternalData,
-  SortableLayout,
-  SortableDirection,
-  Relation,
-} from './typings';
+import { ISortableItemInternalData, SortableLayout, SortableDirection, Relation } from './typings';
 
 export interface ICoord {
   top: number;
@@ -89,10 +84,7 @@ export function getMonitorCoord(
   };
 }
 
-export function getItemCoord(
-  layout: React.RefObject<HTMLDivElement>,
-  item: ISortableItemInternalData
-) {
+export function getItemCoord(layout: React.RefObject<HTMLDivElement>, item: ISortableItemInternalData) {
   const layoutRect = layout.current!.getBoundingClientRect();
   const itemRect = item._rect!;
   const top = itemRect.top - layoutRect.top;
@@ -101,16 +93,8 @@ export function getItemCoord(
     top,
     left,
     itemRect: itemRect.height,
-    compare(
-      other: ICoord,
-      layout: SortableLayout,
-      detection: SortableDirection
-    ): Relation {
-      return other.direction(
-        { y: top, x: left, h: itemRect.height, w: itemRect.width },
-        layout,
-        detection
-      );
+    compare(other: ICoord, layout: SortableLayout, detection: SortableDirection): Relation {
+      return other.direction({ y: top, x: left, h: itemRect.height, w: itemRect.width }, layout, detection);
     },
   };
 }

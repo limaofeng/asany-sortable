@@ -1,27 +1,14 @@
 import { EventEmitter } from 'events';
-import {
-  CSSProperties,
-  FunctionComponent,
-  MutableRefObject,
-  RefCallback,
-  RefObject,
-} from 'react';
+import { CSSProperties, FunctionComponent, MutableRefObject, RefCallback, RefObject } from 'react';
 import { DropTargetMonitor } from 'react-dnd';
 
 export type SortableDirection = 'horizontal' | 'vertical';
 
 export type SortableLayout = 'list' | 'grid';
 
-export type SortableDispatchEvent = (
-  type: SortableEventType,
-  payload?: any
-) => void;
+export type SortableDispatchEvent = (type: SortableEventType, payload?: any) => void;
 
-export type SortableTag =
-  | 'ul'
-  | 'div'
-  | FunctionComponent<any>
-  | React.ReactElement;
+export type SortableTag = 'ul' | 'div' | FunctionComponent<any> | React.ReactElement;
 
 export enum SortableEventType {
   CHANGE = 'change',
@@ -181,9 +168,7 @@ export type SortableSubscribeCallback = () => void;
 
 export type SortableDispatchWithoutAction = (action: SortableAction) => void;
 
-export type SortableSubscribeFunc = (
-  callback: SortableSubscribeCallback
-) => SortableUnsubscribeFunc;
+export type SortableSubscribeFunc = (callback: SortableSubscribeCallback) => SortableUnsubscribeFunc;
 
 export interface ISortableContext {
   eventEmitter: EventEmitter;
@@ -192,10 +177,7 @@ export interface ISortableContext {
   dispatch: SortableDispatchWithoutAction;
 }
 
-export type SortableChange = (
-  value: ISortableItem[],
-  event: SortableChangeEvent
-) => void;
+export type SortableChange = (value: ISortableItem[], event: SortableChangeEvent) => void;
 
 export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
   data: T;
@@ -208,10 +190,7 @@ export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
 
 export type SortableItemContentRenderFunc = (
   props: SortableItemProps,
-  ref:
-    | MutableRefObject<HTMLElement | null>
-    | ((instance: HTMLElement | null) => void)
-    | null
+  ref: MutableRefObject<HTMLElement | null> | ((instance: HTMLElement | null) => void) | null
 ) => React.ReactElement;
 
 export type SortableItemContentRender = React.ForwardRefExoticComponent<

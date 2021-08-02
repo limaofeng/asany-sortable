@@ -4,10 +4,7 @@ import React, { CSSProperties, useCallback, useEffect, useRef } from 'react';
 import { DropTargetMonitor, useDrop, XYCoord } from 'react-dnd';
 import { isElement } from 'react-is';
 
-import useSortableSelector, {
-  useEventManager,
-  useSortableDispatch,
-} from './SortableProvider';
+import useSortableSelector, { useEventManager, useSortableDispatch } from './SortableProvider';
 import {
   ISortableItemInternalData,
   Relation,
@@ -20,12 +17,7 @@ import {
   SortableTag,
   SortLog,
 } from './typings';
-import {
-  findInnerIndex,
-  getInsertIndex,
-  getItemCoord,
-  getMonitorCoord,
-} from './utils';
+import { findInnerIndex, getInsertIndex, getItemCoord, getMonitorCoord } from './utils';
 
 interface SortableContainerTemp {
   lastLog?: SortLog;
@@ -51,16 +43,7 @@ interface SortableContainerProps {
 }
 
 function SortableContainer(props: SortableContainerProps, externalRef: any) {
-  const {
-    tag,
-    className,
-    style,
-    children,
-    accept,
-    layout,
-    direction,
-    onClick,
-  } = props;
+  const { tag, className, style, children, accept, layout, direction, onClick } = props;
 
   const dispatch = useSortableDispatch();
   const events = useEventManager();
@@ -82,11 +65,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     prevMoveData.current = ['', '', 'after'];
   }, []);
 
-  const move = useCallback(function (
-    source: string,
-    target: string,
-    relation: Relation
-  ) {
+  const move = useCallback(function (source: string, target: string, relation: Relation) {
     if (isEqual(prevMoveData.current, [source, target, relation])) {
       return;
     }
@@ -118,8 +97,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     };
     scheduleUpdate(action);
     prevMoveData.current = [source, target, relation];
-  },
-  []);
+  }, []);
 
   useEffect(
     () => () => {
@@ -148,19 +126,16 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     resetMoveData();
   }, []);
 
-  const moveIn = useCallback(
-    (index: number, item: ISortableItemInternalData) => {
-      const { id } = temp.current;
-      events.emit(SortableActionType.moveIn, {
-        insertIndex: index,
-        item,
-        target: id,
-        source: item._sortable,
-      });
-      resetMoveData();
-    },
-    []
-  );
+  const moveIn = useCallback((index: number, item: ISortableItemInternalData) => {
+    const { id } = temp.current;
+    events.emit(SortableActionType.moveIn, {
+      insertIndex: index,
+      item,
+      target: id,
+      source: item._sortable,
+    });
+    resetMoveData();
+  }, []);
 
   const buildExternalRef = (ref: React.RefObject<HTMLDivElement>) => {
     if (typeof externalRef === 'function') {
@@ -188,9 +163,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
       });
       return { type: 'sort', sortable: id, id: item.id };
     },
-    collect: (
-      monitor: DropTargetMonitor<ISortableItemInternalData, SortableDropResult>
-    ) => {
+    collect: (monitor: DropTargetMonitor<ISortableItemInternalData, SortableDropResult>) => {
       const data = {
         item: monitor.getItem(),
         isOver: monitor.isOver(),
@@ -215,9 +188,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
       }
       itemRect = _moveItem._rect;
       let moveItem = getMonitorCoord(ref, itemRect, clientOffset);
-      for (const data of items.filter(
-        (data) => data.id !== item.id && !!data._rect
-      )) {
+      for (const data of items.filter((data) => data.id !== item.id && !!data._rect)) {
         const coord = getItemCoord(ref, data);
         const relation = coord.compare(moveItem, layout, direction);
         if (relation !== 'none') {
@@ -243,25 +214,14 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     }
     const [rootId] = id.split('/');
     if (isOverCurrent) {
-      const insertIndex = getInsertIndex(
-        item,
-        monitor,
-        items,
-        ref,
-        layout,
-        direction
-      );
+      const insertIndex = getInsertIndex(item, monitor, items, ref, layout, direction);
       if (!item._originalSortable) {
         item._registered = id;
       }
       moveIn(insertIndex, item);
     } else if (!item._originalSortable && item._registered == id) {
       moveOut(item);
-    } else if (
-      !item._originalSortable?.startsWith(rootId) &&
-      item._sortable == rootId &&
-      rootId == id
-    ) {
+    } else if (!item._originalSortable?.startsWith(rootId) && item._sortable == rootId && rootId == id) {
       moveOut(item);
     }
   }, [isOverCurrent]);
