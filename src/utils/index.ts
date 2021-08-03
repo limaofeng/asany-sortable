@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { isEqual } from 'lodash';
+import { isEqual } from 'lodash-es';
 
 export const sleep = (time: number) =>
   new Promise((resolve) => {
