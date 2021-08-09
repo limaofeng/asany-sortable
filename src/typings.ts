@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { CSSProperties, FunctionComponent, MutableRefObject, RefCallback, RefObject } from 'react';
+import { CSSProperties, FunctionComponent, MutableRefObject, RefAttributes, RefCallback, RefObject } from 'react';
 import { DropTargetMonitor } from 'react-dnd';
 
 export type SortableDirection = 'horizontal' | 'vertical';
@@ -179,8 +179,15 @@ export interface ISortableContext {
 
 export type SortableChange = (value: ISortableItem[], event: SortableChangeEvent) => void;
 
+export type AnimatedProps = {
+  ['data-flip-config']: string;
+  ['data-flip-id']: string;
+  [key: string]: string;
+};
+
 export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
   data: T;
+  animated: AnimatedProps;
   remove: () => void;
   update: (data: T & { [key: string]: any }) => void;
   className?: string;
@@ -188,14 +195,18 @@ export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
   drag: (ref: RefObject<any>) => RefCallback<any>;
 }
 
+type SortableItemRefObject =
+  | RefAttributes<HTMLElement | unknown>
+  | MutableRefObject<HTMLElement | unknown | null>
+  | ((instance: HTMLElement | null) => void)
+  | null;
+
 export type SortableItemContentRenderFunc = (
   props: SortableItemProps,
-  ref: MutableRefObject<HTMLElement | null> | ((instance: HTMLElement | null) => void) | null
+  ref: SortableItemRefObject
 ) => React.ReactElement;
 
-export type SortableItemContentRender = React.ForwardRefExoticComponent<
-  SortableItemProps & React.RefAttributes<HTMLElement>
->;
+export type SortableItemContentRender = React.ForwardRefExoticComponent<SortableItemProps & SortableItemRefObject>;
 
 export interface SortLog {
   source: string;

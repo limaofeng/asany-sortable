@@ -24,6 +24,7 @@ import {
   SortableRemoveEvent,
   SortableTag,
   SortableProps,
+  AnimatedProps,
 } from './typings';
 
 import './style/index.less';
@@ -254,7 +255,7 @@ const SortableCore = React.forwardRef(function (
   );
 });
 
-export const injectAnime = (props: any) => {
+export const injectAnime = (props: any): AnimatedProps => {
   return Object.keys(props)
     .filter((key) => key.startsWith('data-flip'))
     .reduce((data, name) => {

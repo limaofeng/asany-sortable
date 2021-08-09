@@ -25,22 +25,14 @@ const defaultStyle = {
   backgroundColor: 'white',
 };
 
-const SortItem = forwardRef(
-  (
-    { data, remove, update, style, drag, className }: SortableItemProps<any>,
-    ref: any
-  ) => {
-    return (
-      <li
-        className={className}
-        style={{ ...defaultStyle, ...style }}
-        ref={drag(ref)}
-      >
-        {data.name}
-      </li>
-    );
-  }
-);
+const SortItem = forwardRef((props: SortableItemProps<any>, ref: any) => {
+  const { data, remove, update, style, drag, className } = props;
+  return (
+    <li className={className} style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
+      {data.name}
+    </li>
+  );
+});
 
 const Template: Story<any> = (args) => {
   const [items, setItems] = useState([

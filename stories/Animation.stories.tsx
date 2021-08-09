@@ -2,7 +2,7 @@ import React, { forwardRef, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import AsanySortable, { SortableItemProps, injectAnime } from '../src';
+import AsanySortable, { SortableItemProps } from '../src';
 
 const meta: Meta = {
   title: 'Demos/动画',
@@ -29,23 +29,19 @@ const defaultStyle = {
   backgroundColor: 'white',
 };
 
-const SortItem = forwardRef(
-  (
-    { data, style, drag, className, ...props }: SortableItemProps<any>,
-    ref: any
-  ) => {
-    return (
-      <li
-        {...(Animation.args.enableAnimation ? injectAnime(props) : {})}
-        className={className}
-        style={{ ...defaultStyle, ...style }}
-        ref={drag(ref)}
-      >
-        {data.name}
-      </li>
-    );
-  }
-);
+const SortItem = forwardRef((props: SortableItemProps<any>, ref: any) => {
+  const { data, style, drag, className, animated } = props;
+  return (
+    <li
+      {...(Animation.args.enableAnimation ? animated : {})}
+      className={className}
+      style={{ ...defaultStyle, ...style }}
+      ref={drag(ref)}
+    >
+      {data.name}
+    </li>
+  );
+});
 
 const Template: Story<any> = (args) => {
   const [items, setItems] = useState([
@@ -83,6 +79,6 @@ const Template: Story<any> = (args) => {
 // https://storybook.js.org/docs/react/workflows/unit-testing
 export const Animation = Template.bind({});
 
-Animation.storyName = '动画'
+Animation.storyName = '动画';
 
 Animation.args = {};
