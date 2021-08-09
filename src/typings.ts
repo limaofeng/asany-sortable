@@ -195,7 +195,7 @@ export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
   drag: (ref: RefObject<any>) => RefCallback<any>;
 }
 
-type SortableItemRefObject =
+export type SortableItemRefObject =
   | RefAttributes<HTMLElement | unknown>
   | MutableRefObject<HTMLElement | unknown | null>
   | ((instance: HTMLElement | null) => void)
