@@ -1,5 +1,13 @@
 import { EventEmitter } from 'events';
-import { CSSProperties, FunctionComponent, MutableRefObject, RefAttributes, RefCallback, RefObject } from 'react';
+import {
+  CSSProperties,
+  FunctionComponent,
+  PropsWithoutRef,
+  MutableRefObject,
+  RefAttributes,
+  RefCallback,
+  RefObject,
+} from 'react';
 import { DropTargetMonitor } from 'react-dnd';
 
 export type SortableDirection = 'horizontal' | 'vertical';
@@ -199,14 +207,16 @@ export type SortableItemRefObject =
   | RefAttributes<HTMLElement | unknown>
   | MutableRefObject<HTMLElement | unknown | null>
   | ((instance: HTMLElement | null) => void)
-  | null;
+  | any;
 
 export type SortableItemContentRenderFunc = (
   props: SortableItemProps,
   ref: SortableItemRefObject
 ) => React.ReactElement;
 
-export type SortableItemContentRender = React.ForwardRefExoticComponent<SortableItemProps & SortableItemRefObject>;
+export type SortableItemContentRender = React.ForwardRefExoticComponent<
+  PropsWithoutRef<SortableItemProps> & SortableItemRefObject
+>;
 
 export interface SortLog {
   source: string;
