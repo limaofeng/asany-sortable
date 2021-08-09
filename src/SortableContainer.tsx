@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import { isEqual } from 'lodash';
+import { throttle } from 'lodash-es';
 import React, { CSSProperties, useCallback, useEffect, useRef } from 'react';
 import { DropTargetMonitor, useDrop, XYCoord } from 'react-dnd';
 import { isElement } from 'react-is';
@@ -23,6 +24,7 @@ interface SortableContainerTemp {
   lastLog?: SortLog;
   items: ISortableItemInternalData[];
   moving?: boolean;
+  isOverCurrent?: boolean;
   item?: ISortableItemInternalData;
   monitor?: DropTargetMonitor;
   id: string;
@@ -55,6 +57,40 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
   const prevMoveData = useRef<MoveArgs>(['', '', 'after']);
 
   const temp = useRef<SortableContainerTemp>({ id, items, lastLog });
+  const throttled = useRef(
+    throttle(async (item, monitor) => {
+      const { isOverCurrent, items } = temp.current;
+      if (!isOverCurrent) {
+        return;
+      }
+      let clientOffset = monitor.getSourceClientOffset() as XYCoord;
+      if (!clientOffset) {
+        return;
+      }
+      const _moveItem = items.find((data) => data.id === item.id);
+      let itemRect: DOMRect;
+      if (!_moveItem?._rect) {
+        return;
+      }
+      itemRect = _moveItem._rect;
+      let moveItem = getMonitorCoord(ref, itemRect, clientOffset);
+      const viewPortHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      const abs = Math.abs;
+      let _items = items.filter((item) => (item._rect?.top || 0) < viewPortHeight && (item._rect?.bottom || -1) >= 0);
+      _items = _items.filter((item) => {
+        const x = abs(clientOffset.x - (item._rect?.left || 0));
+        const y = abs(clientOffset.y - (item._rect?.top || 0));
+        return x < (item._rect?.width || 100) * 2 && y < (item._rect?.height || 100) * 2;
+      });
+      for (const data of _items) {
+        const coord = getItemCoord(ref, data);
+        const relation = coord.compare(moveItem, layout, direction);
+        if (relation !== 'none') {
+          return move(item.id, data.id, relation);
+        }
+      }
+    }, 120)
+  );
 
   temp.current.lastLog = lastLog;
 
@@ -173,29 +209,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
       };
       return data;
     },
-    hover: async (item, monitor) => {
-      if (!isOverCurrent) {
-        return;
-      }
-      let clientOffset = monitor.getSourceClientOffset() as XYCoord;
-      if (!clientOffset) {
-        return;
-      }
-      const _moveItem = items.find((data) => data.id === item.id);
-      let itemRect: DOMRect;
-      if (!_moveItem?._rect) {
-        return;
-      }
-      itemRect = _moveItem._rect;
-      let moveItem = getMonitorCoord(ref, itemRect, clientOffset);
-      for (const data of items.filter((data) => data.id !== item.id && !!data._rect)) {
-        const coord = getItemCoord(ref, data);
-        const relation = coord.compare(moveItem, layout, direction);
-        if (relation !== 'none') {
-          return move(item.id, data.id, relation);
-        }
-      }
-    },
+    hover: throttled.current,
   });
 
   temp.current.id = id;
@@ -203,6 +217,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
   temp.current.monitor = monitor;
   temp.current.items = items;
   temp.current.moving = moving;
+  temp.current.isOverCurrent = isOverCurrent;
 
   useEffect(() => {
     const { item, id, monitor, items } = temp.current;

@@ -2,6 +2,7 @@ import { DropTargetMonitor, XYCoord } from 'react-dnd';
 import { ISortableItemInternalData, SortableLayout, SortableDirection, Relation } from './typings';
 
 export interface ICoord {
+  _rect: DOMRect;
   top: number;
   height: number;
   left: number;
@@ -37,6 +38,7 @@ export function getMonitorCoord(
   const height = itemRect.height;
   const width = itemRect.width;
   return {
+    _rect: layoutRect,
     top,
     height,
     left,
