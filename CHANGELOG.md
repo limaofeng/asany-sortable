@@ -1,3 +1,12 @@
+## [0.1.17](https://github.com/limaofeng/asany-sortable/compare/v0.1.16...v0.1.17) (2021-08-10)
+
+
+### Features
+
+* 添加 dragCondition 属性，用于设置 SortItem 是否可以拖拽，对应  useDrag 的 canDrag ([eb661e0](https://github.com/limaofeng/asany-sortable/commit/eb661e044e346de8ec8c5a97ddba08761e7a492a))
+
+
+
 ## [0.1.16](https://github.com/limaofeng/asany-sortable/compare/v0.1.15...v0.1.16) (2021-08-09)
 
 
