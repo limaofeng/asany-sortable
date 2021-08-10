@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, memo, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -32,17 +32,17 @@ const defaultStyle = {
   backgroundColor: 'white',
 };
 
-const SortItem = forwardRef(({ data, style, drag }: SortableItemProps<any>, ref: any) => {
+const SortItem = memo(forwardRef(({ data, style, drag }: SortableItemProps<any>, ref: any) => {
   return (
     <li style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
       {data.name}
     </li>
   );
-});
+}));
 
 const x = [];
 
-for (let i = 0; i < 50; i++) {
+for (let i = 0; i < 1; i++) {
   x.push(i);
 }
 

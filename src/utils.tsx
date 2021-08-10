@@ -1,5 +1,5 @@
 import { DropTargetMonitor, XYCoord } from 'react-dnd';
-import { ISortableItemInternalData, SortableLayout, SortableDirection, Relation } from './typings';
+import { ISortableItemInternalData, SortableLayout, SortableDirection, Relation, AnimatedProps } from './typings';
 
 export interface ICoord {
   _rect: DOMRect;
@@ -157,3 +157,12 @@ export function neighbors(items: ISortableItemInternalData[], viewPortHeight: nu
   });
   return _items;
 }
+
+export const injectAnime = (props: any): AnimatedProps => {
+  return Object.keys(props)
+    .filter((key) => key.startsWith('data-flip'))
+    .reduce((data, name) => {
+      data[name] = props[name];
+      return data;
+    }, {} as any);
+};

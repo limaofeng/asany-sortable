@@ -202,6 +202,12 @@ function useStore(items: ISortableItem[]): ISortableContext {
           },
         });
       }
+      if (action.type == SortableActionType.wakeup) {
+        return { ...state, io: action.payload };
+      }
+      if (action.type == SortableActionType.sleep) {
+        return { ...state, io: action.payload };
+      }
       if (action.type == SortableActionType.init) {
         return { ...action.payload };
       }
@@ -213,6 +219,25 @@ function useStore(items: ISortableItem[]): ISortableContext {
       logs: [],
       id: SORTABLE_ID,
       moving: false,
+      activeIds: [],
+      io: new IntersectionObserver(
+        (ioes) => {
+          ioes.forEach((ioe) => {
+            const el = ioe.target as HTMLElement;
+            const intersectionRatio = ioe.intersectionRatio;
+            const key = el.dataset['id'];
+            console.log('可见 =>', el.innerText, key, intersectionRatio);
+            if (intersectionRatio > 0) {
+              (dispatch as any)({ type: SortableActionType.wakeup, payload: key });
+            } else {
+              (dispatch as any)({ type: SortableActionType.sleep, payload: key });
+            }
+          });
+        },
+        {
+          threshold: [0, 0.1],
+        }
+      ),
     } as any
   );
   const [listeners] = useState<SortableSubscribeCallback[]>([]);
@@ -287,6 +312,8 @@ function useStore(items: ISortableItem[]): ISortableContext {
                 item
               );
         }),
+        activeIds: [],
+        io: state.io,
         backup: [],
         logs: [],
         moving: false,
@@ -294,6 +321,8 @@ function useStore(items: ISortableItem[]): ISortableContext {
       },
     });
   }, [outside]);
+
+  useEffect(() => () => state.io.disconnect(), []);
 
   return store;
 }

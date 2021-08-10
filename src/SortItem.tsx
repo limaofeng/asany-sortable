@@ -2,9 +2,9 @@ import classnames from 'classnames';
 import React, { CSSProperties, useEffect, useReducer, useState } from 'react';
 
 import { useSortItem } from './hooks';
-import { injectAnime } from './Sortable';
-import { useEventManager } from './SortableProvider';
+import useSortableSelector, { useEventManager } from './SortableProvider';
 import { DragCondition, EVENT_ITEMRENDER_RERENDER, ISortableItem, SortableItemContentRender } from './typings';
+import { injectAnime } from './utils';
 
 export interface SortItemProps {
   data: ISortableItem;
@@ -17,6 +17,7 @@ export interface SortItemProps {
 function SortItem({ data, itemRender, dragCondition, className, style, ...props }: SortItemProps) {
   const [version, forceRender] = useReducer((s) => s + 1, 0);
   const events = useEventManager();
+  const io = useSortableSelector((state) => state.io);
   const [{ style: additionStyle, className: additionClassName, remove, update }, ref, drag] = useSortItem(
     data.type,
     data,
@@ -46,11 +47,15 @@ function SortItem({ data, itemRender, dragCondition, className, style, ...props 
   }, [animatedKey, styleMergedKey, className, additionClassName]);
 
   useEffect(() => {
-    events.on(EVENT_ITEMRENDER_RERENDER, forceRender);
+    const el = ref.current!;
+    el.dataset['id'] = data.id;
+    io.observe(el);
+    // events.on(EVENT_ITEMRENDER_RERENDER, forceRender);
     return () => {
-      events.off(EVENT_ITEMRENDER_RERENDER, forceRender);
+      io.unobserve(el);
+      // events.off(EVENT_ITEMRENDER_RERENDER, forceRender);
     };
-  }, []);
+  }, [io]);
 
   return React.useMemo(() => {
     const props = {

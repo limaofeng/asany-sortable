@@ -177,6 +177,10 @@ export enum SortableActionType {
   drop = 'drop',
   // Flipper 动画使用
   moving = 'moving',
+  // 激活
+  wakeup = 'activate',
+  // 睡觉
+  sleep = 'sleep',
 }
 
 export interface SortableAction {
@@ -244,10 +248,12 @@ export interface ISortableState {
   dragging?: ISortableItemInternalData;
   backup: ISortableItemInternalData[];
   items: ISortableItemInternalData[];
+  activeIds: string[];
   logs: SortLog[];
   emitter: EventEmitter;
   moving: boolean;
   accept: string[];
+  io: IntersectionObserver;
 }
 
 export type Relation = 'before' | 'after' | 'none';

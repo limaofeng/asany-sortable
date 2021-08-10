@@ -8,7 +8,6 @@ import SortableContainer from './SortableContainer';
 import useSortableSelector, { SortableProvider, useEventManager, useSortableDispatch } from './SortableProvider';
 import SortItem, { SortItemProps } from './SortItem';
 import {
-  AnimatedProps,
   DEFAULT_ITEM_TYPE,
   DragCondition,
   ISortableItem,
@@ -253,14 +252,5 @@ const SortableCore = React.forwardRef(function (
     </SortableContainer>
   );
 });
-
-export const injectAnime = (props: any): AnimatedProps => {
-  return Object.keys(props)
-    .filter((key) => key.startsWith('data-flip'))
-    .reduce((data, name) => {
-      data[name] = props[name];
-      return data;
-    }, {} as any);
-};
 
 export default React.forwardRef(Sortable);
