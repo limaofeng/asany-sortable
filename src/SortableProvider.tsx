@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useReducer, useRef,
 import { EventEmitter } from 'events';
 import update from 'immutability-helper';
 import {
+  EVENT_ITEMRENDER_RERENDER,
   ISortableContext,
   ISortableItem,
   ISortableState,
@@ -19,6 +20,7 @@ export const SortableStoreContext = React.createContext<ISortableContext>({
 
 interface SortableProviderProps {
   items: ISortableItem[];
+  rerender: boolean;
   deps: ReadonlyArray<any>;
   children: React.ReactNode;
 }
@@ -297,7 +299,12 @@ function useStore(items: ISortableItem[]): ISortableContext {
 }
 
 export const SortableProvider = (props: SortableProviderProps) => {
-  const { deps = [], items, children } = props;
+  const { deps = [], items, children, rerender } = props;
   const store = useStore(items);
+
+  useEffect(() => {
+    rerender && store.eventEmitter.emit(EVENT_ITEMRENDER_RERENDER);
+  });
+
   return useMemo(() => <SortableStoreContext.Provider value={store}>{children}</SortableStoreContext.Provider>, deps);
 };

@@ -69,6 +69,7 @@ function Sortable(
     className,
     layout = 'list',
     children,
+    rerender = true,
     accept = defaultAccept,
     items: propsItems,
     itemRender,
@@ -80,7 +81,7 @@ function Sortable(
   const [innerItemRender] = useState<SortableItemContentRender>(() => buildItemRender(itemRender, children));
 
   return (
-    <SortableProvider items={items} deps={[layout, tag, direction, className, dragCondition]}>
+    <SortableProvider rerender={rerender} items={items} deps={[layout, tag, direction, className, dragCondition]}>
       <SortableCore
         tag={tag}
         ref={ref}

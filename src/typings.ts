@@ -30,6 +30,8 @@ export enum SortableEventType {
 
 export const DEFAULT_ITEM_TYPE = 'sortable-card';
 
+export const EVENT_ITEMRENDER_RERENDER = 'ITEMRENDER_RERENDER';
+
 export enum SortableChangeEventType {
   /**
    * 移入
@@ -293,7 +295,11 @@ export interface SortableProps {
   items?: ISortableItem[];
 
   itemRender?: SortableItemContentRender | SortableItemContentRenderFunc;
-
+  /**
+   * 父组件刷新时 itemRender 是否重新渲染
+   * 默认: true
+   */
+  rerender?: boolean;
   /**
    * 元素移入
    * @experimental
