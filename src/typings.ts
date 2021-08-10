@@ -28,6 +28,8 @@ export enum SortableEventType {
   DRAGGING = 'DRAGGING',
 }
 
+export const DEFAULT_ITEM_TYPE = 'sortable-card';
+
 export enum SortableChangeEventType {
   /**
    * 移入
@@ -55,8 +57,17 @@ export interface DragObjectWithType {}
 
 export interface ISortableItem extends DragObjectWithType {
   id: string;
-  type: string;
+  /**
+   * 类型
+   */
+  type?: string;
+  /**
+   * 可排序
+   */
   sortable?: boolean;
+  /**
+   * 可删除
+   */
   deleteable?: boolean;
 }
 
@@ -215,9 +226,9 @@ export type SortableItemContentRenderFunc = (
   ref: SortableItemRefObject
 ) => React.ReactElement;
 
-export type SortableItemContentRender = React.ForwardRefExoticComponent<
-  PropsWithoutRef<SortableItemProps> & SortableItemRefObject
->;
+export type SortableItemContentRender =
+  | React.ForwardRefExoticComponent<PropsWithoutRef<SortableItemProps> & SortableItemRefObject>
+  | SortableItemContentRenderFunc;
 
 export interface SortLog {
   source: string;

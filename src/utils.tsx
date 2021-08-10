@@ -145,3 +145,15 @@ export function getInsertIndex(
 export function findInnerIndex(id: string, items: ISortableItemInternalData[]) {
   return items.findIndex((data) => data.id == id);
 }
+
+const abs = Math.abs;
+
+export function neighbors(items: ISortableItemInternalData[], viewPortHeight: number, clientOffset: XYCoord) {
+  let _items = items.filter((item) => (item._rect?.top || 0) < viewPortHeight && (item._rect?.bottom || -1) >= 0);
+  _items = _items.filter((item) => {
+    const x = abs(clientOffset.x - (item._rect?.left || 0));
+    const y = abs(clientOffset.y - (item._rect?.top || 0));
+    return x < (item._rect?.width || 100) * 2 && y < (item._rect?.height || 100) * 2;
+  });
+  return _items;
+}

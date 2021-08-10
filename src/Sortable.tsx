@@ -1,34 +1,33 @@
-import classnames from 'classnames';
-import { Flipped, Flipper } from 'react-flip-toolkit';
-import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
-import { isForwardRef } from 'react-is';
+import './style/index.less';
 
-import { ItemTypes } from './ItemTypes';
+import classnames from 'classnames';
+import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { Flipped, Flipper } from 'react-flip-toolkit';
+
 import SortableContainer from './SortableContainer';
 import useSortableSelector, { SortableProvider, useEventManager, useSortableDispatch } from './SortableProvider';
 import SortItem, { SortItemProps } from './SortItem';
 import {
+  AnimatedProps,
+  DEFAULT_ITEM_TYPE,
+  DragCondition,
   ISortableItem,
   ISortableItemInternalData,
   SortableActionType,
   SortableChange,
   SortableChangeEvent,
   SortableChangeEventType,
+  SortableDirection,
   SortableDropEvent,
   SortableItemContentRender,
   SortableItemContentRenderFunc,
-  SortableDirection,
   SortableLayout,
   SortableMoveInEvent,
   SortableMoveOutEvent,
+  SortableProps,
   SortableRemoveEvent,
   SortableTag,
-  SortableProps,
-  AnimatedProps,
-  DragCondition,
 } from './typings';
-
-import './style/index.less';
 
 function buildItems(items: ISortableItem[] | undefined, children: React.ReactNodeArray | undefined) {
   if (items) {
@@ -51,17 +50,14 @@ function buildItemRender(
     throw 'Sortable 的 itemRender 及 children 不能同时为 NULL';
   }
   if (!!itemRender) {
-    if (isForwardRef(React.createElement(itemRender))) {
-      return itemRender as SortableItemContentRender;
-    }
-    return React.forwardRef((props, ref) => itemRender(props, ref));
+    return itemRender;
   }
   const nodes = React.Children.toArray(children) as React.ReactElement<SortItemProps>[];
   const tempNode = nodes[0];
-  return React.forwardRef((props, ref) => React.cloneElement(tempNode, { ...props, ref } as any));
+  return (props, ref) => React.cloneElement(tempNode, { ...props, ref } as any);
 }
 
-const defaultAccept = [ItemTypes.CARD];
+const defaultAccept = [DEFAULT_ITEM_TYPE];
 
 function Sortable(
   props: SortableProps,
@@ -81,7 +77,7 @@ function Sortable(
   } = props;
   const { direction = layout == 'grid' ? 'horizontal' : 'vertical' } = props;
   const items = buildItems(propsItems, children);
-  const [innerItemRender] = useState<SortableItemContentRender>(buildItemRender(itemRender, children));
+  const [innerItemRender] = useState<SortableItemContentRender>(() => buildItemRender(itemRender, children));
 
   return (
     <SortableProvider items={items} deps={[layout, tag, direction, className, dragCondition]}>

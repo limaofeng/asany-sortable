@@ -32,20 +32,31 @@ const defaultStyle = {
   backgroundColor: 'white',
 };
 
-const SortItem = forwardRef(
-  ({ data, style, drag }: SortableItemProps<any>, ref: any) => {
-    return (
-      <li style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
-        {data.name}
-      </li>
-    );
-  }
-);
+const SortItem = forwardRef(({ data, style, drag }: SortableItemProps<any>, ref: any) => {
+  return (
+    <li style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
+      {data.name}
+    </li>
+  );
+});
+
+const x = [];
+
+for (let i = 0; i < 50; i++) {
+  x.push(i);
+}
 
 const Template: Story<SortableProps> = (args) => {
   const [items, setItems] = useState(
-    heros.map((name, id) => ({ id: String(id), name, type: 'sortable-card' }))
+    x.reduce((array, item) => {
+      array.push(
+        ...heros.map((name, id) => ({ id: String(id) + '-' + item, name: name + '-' + item, type: 'sortable-card' }))
+      );
+      return array;
+    }, [])
   );
+
+  console.log('items:', items.length);
 
   const handleChange = (data, event) => {
     args.onChange(data, event);

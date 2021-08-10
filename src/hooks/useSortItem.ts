@@ -3,7 +3,13 @@ import { DragSourceMonitor, useDrag } from 'react-dnd';
 
 import { assign, sleep } from '../utils/index';
 import useSelector, { useEventManager, useSortableDispatch } from '../SortableProvider';
-import { DragCondition, ISortableItem, ISortableItemInternalData, SortableActionType } from '../typings';
+import {
+  DEFAULT_ITEM_TYPE,
+  DragCondition,
+  ISortableItem,
+  ISortableItemInternalData,
+  SortableActionType,
+} from '../typings';
 
 const style: React.CSSProperties = {};
 
@@ -32,6 +38,7 @@ interface SortItemOptions {
 }
 
 function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
+  type: string = DEFAULT_ITEM_TYPE,
   data: T,
   options?: SortItemOptions
 ): SortItemState<RT> {
@@ -88,7 +95,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
   );
 
   const [{ isDragging }, drag, connectDrag] = useDrag<ISortableItemInternalData, any, any>({
-    type: data.type,
+    type,
     collect: (monitor) => {
       const item = monitor.getItem();
       const result = {

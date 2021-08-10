@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from 'react';
+import React, { forwardRef, memo, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -25,24 +25,25 @@ const defaultStyle = {
   backgroundColor: 'white',
 };
 
-const SortItem = forwardRef((props: SortableItemProps<any>, ref: any) => {
+const SortItem = memo(forwardRef((props: SortableItemProps<any>, ref: any) => {
   const { data, remove, update, style, drag, className } = props;
+  console.log('changed', data.name);
   return (
     <li className={className} style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
       {data.name}
     </li>
   );
-});
+}));
 
 const Template: Story<any> = (args) => {
   const [items, setItems] = useState([
-    { id: '1', name: '小明', type: 'sortable-card' },
-    { id: '2', name: '陈二', type: 'sortable-card' },
-    { id: '3', name: '张三', type: 'sortable-card' },
-    { id: '4', name: '李四', type: 'sortable-card' },
-    { id: '5', name: '老五', type: 'sortable-card' },
-    { id: '6', name: '赵六', type: 'sortable-card' },
-    { id: '7', name: '王七', type: 'sortable-card' },
+    { id: '1', name: '小明' },
+    { id: '2', name: '陈二' },
+    { id: '3', name: '张三' },
+    { id: '4', name: '李四' },
+    { id: '5', name: '老五' },
+    { id: '6', name: '赵六' },
+    { id: '7', name: '王七' },
   ]);
 
   const handleChange = (data, event) => {
@@ -52,7 +53,6 @@ const Template: Story<any> = (args) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <AsanySortable
-        accept={['sortable-card']}
         tag="ul"
         style={{ listStyle: 'none', padding: 0 }}
         items={items}
