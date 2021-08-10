@@ -1,9 +1,9 @@
 import { CSSProperties, RefCallback, RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
-import { useDrag } from 'react-dnd';
+import { DragSourceMonitor, useDrag } from 'react-dnd';
 
 import { assign, sleep } from '../utils/index';
 import useSelector, { useEventManager, useSortableDispatch } from '../SortableProvider';
-import { ISortableItem, ISortableItemInternalData, SortableActionType } from '../typings';
+import { DragCondition, ISortableItem, ISortableItemInternalData, SortableActionType } from '../typings';
 
 const style: React.CSSProperties = {};
 
@@ -26,6 +26,7 @@ export type SortItemDragStartEvent = {
 
 interface SortItemOptions {
   sortable?: boolean;
+  dragCondition?: DragCondition;
   onDragStart?: (event: SortItemDragStartEvent) => void;
   onDragEnd?: () => void;
 }
@@ -34,7 +35,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
   data: T,
   options?: SortItemOptions
 ): SortItemState<RT> {
-  const { sortable = true } = options || {};
+  const { sortable = true, dragCondition } = options || {};
 
   const dispatch = useSortableDispatch();
   const events = useEventManager();
@@ -79,6 +80,13 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     });
   }, []);
 
+  const handleCanDrag = useCallback(
+    (monitor: DragSourceMonitor<ISortableItemInternalData>) => {
+      return dragCondition ? dragCondition(dataRef.current, monitor) : sortable;
+    },
+    [sortable]
+  );
+
   const [{ isDragging }, drag, connectDrag] = useDrag<ISortableItemInternalData, any, any>({
     type: data.type,
     collect: (monitor) => {
@@ -88,9 +96,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
       };
       return result;
     },
-    canDrag() {
-      return sortable;
-    },
+    canDrag: handleCanDrag,
     item: () => {
       return (dataRef.current = {
         ...data,

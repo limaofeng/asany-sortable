@@ -3,17 +3,21 @@ import React, { CSSProperties } from 'react';
 
 import { useSortItem } from './hooks';
 import { injectAnime } from './Sortable';
-import { ISortableItem, SortableItemContentRender } from './typings';
+import { DragCondition, ISortableItem, SortableItemContentRender } from './typings';
 
 export interface SortItemProps {
   data: ISortableItem;
   className?: string;
   style?: CSSProperties;
+  dragCondition?: DragCondition;
   itemRender: SortableItemContentRender;
 }
 
-function SortItem({ data, itemRender: ItemRender, className, style, ...props }: SortItemProps) {
-  const [{ style: additionStyle, className: additionClassName, remove, update }, ref, drag] = useSortItem(data);
+function SortItem({ data, itemRender: ItemRender, dragCondition, className, style, ...props }: SortItemProps) {
+  const [{ style: additionStyle, className: additionClassName, remove, update }, ref, drag] = useSortItem(data, {
+    sortable: data.sortable,
+    dragCondition,
+  });
   const animated = injectAnime(props);
   const animatedKey = Object.keys(animated)
     .map((key) => animated[key])

@@ -8,7 +8,7 @@ import {
   RefCallback,
   RefObject,
 } from 'react';
-import { DropTargetMonitor } from 'react-dnd';
+import { DragSourceMonitor, DropTargetMonitor } from 'react-dnd';
 
 export type SortableDirection = 'horizontal' | 'vertical';
 
@@ -56,6 +56,7 @@ export interface DragObjectWithType {}
 export interface ISortableItem extends DragObjectWithType {
   id: string;
   type: string;
+  sortable?: boolean;
   deleteable?: boolean;
 }
 
@@ -238,6 +239,8 @@ export interface ISortableState {
 
 export type Relation = 'before' | 'after' | 'none';
 
+export type DragCondition = (data: ISortableItem, monitor: DragSourceMonitor<ISortableItem>) => boolean;
+
 export interface SortableProps {
   /**
    * 方向
@@ -271,12 +274,15 @@ export interface SortableProps {
    * 排序改变时触发，drop 及 remove 也会触发该函数
    */
   onChange: SortableChange;
+  /**
+   * 拖拽条件
+   */
+  dragCondition?: DragCondition;
 
   items?: ISortableItem[];
 
   itemRender?: SortableItemContentRender | SortableItemContentRenderFunc;
 
-  onClick?: (e: React.MouseEvent) => void;
   /**
    * 元素移入
    * @experimental

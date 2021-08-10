@@ -41,11 +41,10 @@ interface SortableContainerProps {
   children: React.ReactNode;
   className?: string;
   removable?: boolean;
-  onClick?: (e: React.MouseEvent) => void;
 }
 
 function SortableContainer(props: SortableContainerProps, externalRef: any) {
-  const { tag, className, style, children, accept, layout, direction, onClick } = props;
+  const { tag, className, style, children, accept, layout, direction } = props;
 
   const dispatch = useSortableDispatch();
   const events = useEventManager();
@@ -250,7 +249,6 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
       ref: drop(buildExternalRef(ref)),
       children,
       className: classnames(className),
-      onClick: onClick,
       style: { ...style, backgroundColor },
     });
   }
@@ -258,7 +256,6 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     ref: drop(buildExternalRef(ref)),
     children,
     className: classnames(className),
-    onClick: onClick,
     style: { ...style, backgroundColor },
   });
 }
