@@ -1,3 +1,12 @@
+## [0.1.18](https://github.com/limaofeng/asany-sortable/compare/v0.1.17...v0.1.18) (2021-08-10)
+
+
+### Features
+
+* itemRender 如果为函数,使用函数式调用 ([ad5bc9c](https://github.com/limaofeng/asany-sortable/commit/ad5bc9c00b3bb41913b58bbf05b4d477734f940f))
+
+
+
 ## [0.1.17](https://github.com/limaofeng/asany-sortable/compare/v0.1.16...v0.1.17) (2021-08-10)
 
 
