@@ -1,3 +1,12 @@
+## [0.1.21](https://github.com/limaofeng/asany-sortable/compare/v0.1.20...v0.1.21) (2021-08-11)
+
+
+### Features
+
+* itemRender 添加 clicked 与 dragging ([8436804](https://github.com/limaofeng/asany-sortable/commit/84368048b48d24e340657da538d330b46fc05e47))
+
+
+
 ## [0.1.20](https://github.com/limaofeng/asany-sortable/compare/v0.1.19...v0.1.20) (2021-08-11)
 
 
