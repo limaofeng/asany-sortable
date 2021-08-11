@@ -1,3 +1,13 @@
+## [0.1.22](https://github.com/limaofeng/asany-sortable/compare/v0.1.21...v0.1.22) (2021-08-11)
+
+
+### Bug Fixes
+
+*  rerender 选项默认值逻辑调整，itemRender 为函数是为 tree 为组件时为 false ([54bf7f5](https://github.com/limaofeng/asany-sortable/commit/54bf7f5135e50e6bee72f45dbc33e73a6dcea3ba))
+* 解决禁用拖拽后依然更新 clicked 值的 BUG ([f61aaab](https://github.com/limaofeng/asany-sortable/commit/f61aaabc6a4b693f27368e60eed0bf0c84cf6626))
+
+
+
 ## [0.1.21](https://github.com/limaofeng/asany-sortable/compare/v0.1.20...v0.1.21) (2021-08-11)
 
 
