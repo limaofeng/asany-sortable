@@ -1,4 +1,4 @@
-import { CSSProperties, RefCallback, RefObject, useCallback, useEffect, useMemo, useRef } from 'react';
+import { CSSProperties, RefCallback, RefObject, useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { DragSourceMonitor, useDrag } from 'react-dnd';
 
 import { assign, sleep } from '../utils/index';
@@ -15,6 +15,7 @@ const style: React.CSSProperties = {};
 
 type SortItemState<RT extends HTMLElement> = [
   {
+    clicked: boolean;
     isDragging: boolean;
     className?: string;
     style: CSSProperties;
@@ -49,6 +50,13 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
   const sortableId = useSelector((state) => state.id);
   const dragging = useSelector((state) => state.dragging);
   const dataRef = useRef<ISortableItem>(data);
+  const [, forceRender] = useReducer((s) => s + 1, 0);
+  const clicked = useRef(false);
+
+  const setClicked = useCallback((b: boolean) => {
+    clicked.current = b;
+    forceRender();
+  }, []);
 
   const ref = useRef<RT>(null);
 
@@ -61,19 +69,24 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     }
   }, []);
 
+  const handleMouseDown = useCallback(() => setClicked(true), []);
+  const handleMouseUp = useCallback(() => setClicked(false), []);
+
   // TODO 修复 useDrag end 函数触发问题
   useEffect(() => {
-    const timer = setInterval(() => {
-      if (!ref.current) {
-        return;
-      }
-      clearInterval(timer);
-      ref.current.addEventListener('dragend', handleDragend);
-    }, 100);
+    const el = ref.current;
+    if (!el) {
+      return;
+    }
+    el.addEventListener('mousedown', handleMouseDown);
+    el.addEventListener('mouseup', handleMouseUp);
+    el.addEventListener('dragend', handleDragend);
     return () => {
-      clearInterval(timer);
+      el.removeEventListener('mouseDown', handleMouseDown);
+      el.removeEventListener('mouseUp', handleMouseUp);
+      el.removeEventListener('dragend', handleDragend);
     };
-  }, []);
+  }, [ref.current]);
 
   useEffect(() => {
     dispatch({
@@ -116,6 +129,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
       });
     },
     end: (item, monitor) => {
+      clicked.current = false;
       const result = monitor.getDropResult();
       if (result?.type === 'sort') {
         return;
@@ -177,6 +191,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
 
   return [
     {
+      clicked: clicked.current,
       isDragging,
       update: handleUpdate,
       remove: handleRemove,

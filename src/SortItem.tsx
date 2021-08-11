@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, { CSSProperties, useEffect, useReducer, useState } from 'react';
+import React, { CSSProperties, useEffect, useMemo, useReducer, useRef } from 'react';
 
 import { useSortItem } from './hooks';
 import useSortableSelector, { useEventManager } from './SortableProvider';
@@ -19,17 +19,17 @@ function SortItem({ data, itemRender, dragCondition, className, style, ...props 
   const events = useEventManager();
   const io = useSortableSelector((state) => state.io);
   const visibled = useSortableSelector((state) => state.activeIds.includes(data.id));
-  const [{ style: additionStyle, className: additionClassName, remove, update }, ref, drag] = useSortItem(
-    data.type,
-    data,
-    {
-      sortable: data.sortable,
-      dragCondition,
-    }
-  );
-  const [state, setState] = useState({
+  const [
+    { style: additionStyle, className: additionClassName, remove, update, isDragging, clicked },
+    ref,
+    drag,
+  ] = useSortItem(data.type, data, {
+    sortable: data.sortable,
+    dragCondition,
+  });
+  const state = useRef({
     animated: injectAnime(props),
-    style: { ...style, ...additionStyle },
+    style,
     className: classnames(className, additionClassName),
   });
 
@@ -42,10 +42,6 @@ function SortItem({ data, itemRender, dragCondition, className, style, ...props 
   const styleMergedKey = Object.keys(styleMerged)
     .map((key) => (styleMerged as any)[key])
     .join(',');
-
-  useEffect(() => {
-    setState({ animated, style: styleMerged, className: classnames(className, additionClassName) });
-  }, [animatedKey, styleMergedKey, className, additionClassName]);
 
   useEffect(() => {
     const el = ref.current!;
@@ -66,11 +62,17 @@ function SortItem({ data, itemRender, dragCondition, className, style, ...props 
     };
   }, [visibled]);
 
+  state.current = useMemo(() => {
+    return { animated, style: styleMerged, className: classnames(className, additionClassName) };
+  }, [animatedKey, styleMergedKey, className, additionClassName]);
+
   return React.useMemo(() => {
     const props = {
-      animated: state.animated,
-      className: state.className,
-      style: state.style,
+      clicked,
+      dragging: isDragging,
+      animated: state.current.animated,
+      className: state.current.className,
+      style: state.current.style,
       data,
       remove,
       update,
@@ -81,7 +83,7 @@ function SortItem({ data, itemRender, dragCondition, className, style, ...props 
     }
     (props as any).ref = ref;
     return React.createElement(itemRender, props);
-  }, [version, state, data /*remove, update, drag, ref*/]);
+  }, [version, state.current, data, clicked, isDragging]);
 }
 
 export default React.memo(SortItem);
