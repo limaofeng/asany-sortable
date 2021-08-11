@@ -1,3 +1,13 @@
+## [0.1.20](https://github.com/limaofeng/asany-sortable/compare/v0.1.19...v0.1.20) (2021-08-11)
+
+
+### Features
+
+*  使用 IntersectionObserver 过滤不可见的元素 ([f3b4d83](https://github.com/limaofeng/asany-sortable/commit/f3b4d83185ad9739b0460ed2f094b33f68ea4186))
+* 优化 rerender 刷新方式，只触发可见范围内的组件 ([fc59811](https://github.com/limaofeng/asany-sortable/commit/fc59811a263c0e1f6982a0804fbf00e90bda5e42))
+
+
+
 ## [0.1.19](https://github.com/limaofeng/asany-sortable/compare/v0.1.18...v0.1.19) (2021-08-10)
 
 
