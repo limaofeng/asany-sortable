@@ -69,7 +69,11 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     }
   }, []);
 
-  const handleMouseDown = useCallback(() => setClicked(true), []);
+  const handleMouseDown = useCallback(() => {
+    if (handleCanDrag('拖拽检测' as any)) {
+      setClicked(true);
+    }
+  }, []);
   const handleMouseUp = useCallback(() => setClicked(false), []);
 
   // TODO 修复 useDrag end 函数触发问题
