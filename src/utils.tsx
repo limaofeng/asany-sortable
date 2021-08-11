@@ -147,10 +147,14 @@ export function findInnerIndex(id: string, items: ISortableItemInternalData[]) {
 }
 
 export const injectAnime = (props: any): AnimatedProps => {
-  return Object.keys(props)
+  const key: string[] = [];
+  const anime = Object.keys(props)
     .filter((key) => key.startsWith('data-flip'))
     .reduce((data, name) => {
       data[name] = props[name];
+      key.push(props[name]);
       return data;
     }, {} as any);
+  anime.key = key.join(',');
+  return anime;
 };

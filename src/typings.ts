@@ -204,6 +204,7 @@ export interface ISortableContext {
 export type SortableChange = (value: ISortableItem[], event: SortableChangeEvent) => void;
 
 export type AnimatedProps = {
+  key: string;
   ['data-flip-config']: string;
   ['data-flip-id']: string;
   [key: string]: string;
