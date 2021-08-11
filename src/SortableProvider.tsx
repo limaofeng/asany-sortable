@@ -5,6 +5,7 @@ import {
   EVENT_ITEMRENDER_RERENDER,
   ISortableContext,
   ISortableItem,
+  ISortableItemInternalData,
   ISortableState,
   SortableAction,
   SortableActionType,
@@ -73,9 +74,43 @@ export default function useSortableSelector<Selected>(
 
 export const useSortableStore = () => useContext(SortableStoreContext);
 
+const delayDispatch = (callback: any, delay: number) => {
+  const wakeupBuffer = new Set<string>();
+  const sleepBuffer = new Set<string>();
+  let exec: NodeJS.Timeout | undefined;
+  return (type: 'wakeup' | 'sleep', value: string) => {
+    if (type == 'wakeup') {
+      wakeupBuffer.add(value);
+      sleepBuffer.delete(value);
+    } else {
+      wakeupBuffer.delete(value);
+      sleepBuffer.add(value);
+    }
+
+    if (exec) {
+      return;
+    }
+    exec = setTimeout(() => {
+      const wakeups = Array.from(wakeupBuffer);
+      wakeupBuffer.clear();
+      const sleeps = Array.from(sleepBuffer);
+      sleepBuffer.clear();
+      exec = undefined;
+      callback(wakeups, sleeps);
+    }, delay);
+  };
+};
+
 function useStore(items: ISortableItem[]): ISortableContext {
   const prevStore = useSortableStore();
   const [SORTABLE_ID] = useState(generateUUID());
+
+  const intersectionObserverCallback = useRef(
+    delayDispatch((wakeups: ISortableItemInternalData[], sleeps: ISortableItemInternalData[]) => {
+      (dispatch as any)({ type: SortableActionType.observed, payload: { wakeups, sleeps } });
+    }, 120)
+  );
+
   const [state, dispatch] = useReducer<React.ReducerWithoutAction<ISortableState>>(
     ((state: ISortableState, action: SortableAction): ISortableState => {
       if (action.type === SortableActionType.UPDATE_ID) {
@@ -202,11 +237,17 @@ function useStore(items: ISortableItem[]): ISortableContext {
           },
         });
       }
-      if (action.type == SortableActionType.wakeup) {
-        return { ...state, io: action.payload };
-      }
-      if (action.type == SortableActionType.sleep) {
-        return { ...state, io: action.payload };
+      if (action.type == SortableActionType.observed) {
+        const { activeIds } = state;
+        const { wakeups, sleeps } = action.payload;
+        const set = new Set(activeIds);
+        wakeups.forEach(set.add.bind(set));
+        sleeps.forEach(set.delete.bind(set));
+        return update(state, {
+          activeIds: {
+            $set: Array.from(set),
+          },
+        });
       }
       if (action.type == SortableActionType.init) {
         return { ...action.payload };
@@ -226,12 +267,7 @@ function useStore(items: ISortableItem[]): ISortableContext {
             const el = ioe.target as HTMLElement;
             const intersectionRatio = ioe.intersectionRatio;
             const key = el.dataset['id'];
-            console.log('可见 =>', el.innerText, key, intersectionRatio);
-            if (intersectionRatio > 0) {
-              (dispatch as any)({ type: SortableActionType.wakeup, payload: key });
-            } else {
-              (dispatch as any)({ type: SortableActionType.sleep, payload: key });
-            }
+            intersectionObserverCallback.current(intersectionRatio > 0 ? 'wakeup' : 'sleep', key!);
           });
         },
         {
@@ -259,13 +295,17 @@ function useStore(items: ISortableItem[]): ISortableContext {
       listener();
     }
   }, []);
-  const initStore: ISortableContext = {
-    getState: () => state,
-    dispatch,
-    eventEmitter: prevStore.eventEmitter || new EventEmitter(),
-    subscribe: handleSubscribe,
-  };
-  const [store] = useState(initStore);
+
+  const [store] = useState(() => {
+    const initStore: ISortableContext = {
+      getState: () => state,
+      dispatch,
+      eventEmitter: prevStore.eventEmitter || new EventEmitter(),
+      subscribe: handleSubscribe,
+    };
+    initStore.eventEmitter.setMaxListeners(500);
+    return initStore;
+  });
 
   const parentId = useSortableSelector((state) => state.id);
   useEffect(() => {

@@ -18,7 +18,7 @@ import {
   SortableTag,
   SortLog,
 } from './typings';
-import { findInnerIndex, getInsertIndex, getItemCoord, getMonitorCoord, neighbors } from './utils';
+import { findInnerIndex, getInsertIndex, getItemCoord, getMonitorCoord } from './utils';
 
 interface SortableContainerTemp {
   lastLog?: SortLog;
@@ -27,6 +27,7 @@ interface SortableContainerTemp {
   isOverCurrent?: boolean;
   item?: ISortableItemInternalData;
   monitor?: DropTargetMonitor;
+  activities: ISortableItemInternalData[];
   id: string;
 }
 
@@ -52,51 +53,45 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
   const id = useSortableSelector((state) => state.id);
   const items = useSortableSelector((state) => state.items);
   const moving = useSortableSelector((state) => state.moving);
+  const activeIds = useSortableSelector((state) => state.activeIds);
+
   const [lastLog] = useSortableSelector((state) => state.logs.slice(-1));
-  const prevMoveData = useRef<MoveArgs>(['', '', 'after']);
-
-  const temp = useRef<SortableContainerTemp>({ id, items, lastLog });
-  const execute = useRef(async (item: ISortableItemInternalData, monitor: DropTargetMonitor) => {
-    const { isOverCurrent, items } = temp.current;
-    if (!isOverCurrent) {
-      return;
-    }
-    const clientOffset = monitor.getSourceClientOffset() as XYCoord;
-    if (!clientOffset) {
-      return;
-    }
-    const _moveItem = items.find((data) => data.id === item.id);
-    let itemRect: DOMRect;
-    if (!_moveItem?._rect) {
-      return;
-    }
-    itemRect = _moveItem._rect;
-    const moveItem = getMonitorCoord(ref, itemRect, clientOffset);
-    const viewPortHeight = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-
-    const i = items.indexOf(_moveItem);
-    const thin = items.slice(Math.max(i - 100, 0), i + 100);
-
-    const _items = neighbors(thin, viewPortHeight, clientOffset);
-    for (const data of _items) {
-      const coord = getItemCoord(ref, data);
-      const relation = coord.compare(moveItem, layout, direction);
-      if (relation !== 'none') {
-        return move(item.id, data.id, relation);
-      }
-    }
-  });
-  const ghz = Math.min(Math.floor(items.length / 1500), 3);
-  const throttled = useRef(throttle(execute.current, ghz));
-
-  useCallback(() => {
-    throttled.current = throttle(execute.current, 60 * ghz);
-  }, [ghz]);
-
-  temp.current.lastLog = lastLog;
 
   const pendingUpdateFn = useRef<SortableAction>();
   const requestedFrame = useRef<any>();
+  const prevMoveData = useRef<MoveArgs>(['', '', 'after']);
+  const temp = useRef<SortableContainerTemp>({ id, items, lastLog, activities: [] });
+  const throttled = useRef(
+    throttle(async (item: ISortableItemInternalData, monitor: DropTargetMonitor) => {
+      const { isOverCurrent, activities } = temp.current;
+      if (!isOverCurrent) {
+        return;
+      }
+      const clientOffset = monitor.getSourceClientOffset() as XYCoord;
+      if (!clientOffset) {
+        return;
+      }
+      const _moveItem = activities.find((data) => data.id === item.id);
+      let itemRect: DOMRect;
+      if (!_moveItem?._rect) {
+        return;
+      }
+      itemRect = _moveItem._rect;
+      const moveItem = getMonitorCoord(ref, itemRect, clientOffset);
+      for (const data of activities) {
+        const coord = getItemCoord(ref, data);
+        const relation = coord.compare(moveItem, layout, direction);
+        if (relation !== 'none') {
+          return move(item.id, data.id, relation);
+        }
+      }
+    }, 60)
+  );
+
+  useEffect(() => {
+    const { items } = temp.current;
+    temp.current.activities = items.filter((item) => activeIds.includes(item.id));
+  }, [activeIds]);
 
   const resetMoveData = useCallback(() => {
     prevMoveData.current = ['', '', 'after'];
@@ -213,6 +208,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     hover: throttled.current,
   });
 
+  temp.current.lastLog = lastLog;
   temp.current.id = id;
   temp.current.item = item;
   temp.current.monitor = monitor;

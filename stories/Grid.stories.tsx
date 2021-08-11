@@ -32,17 +32,20 @@ const defaultStyle = {
   backgroundColor: 'white',
 };
 
-const SortItem = memo(forwardRef(({ data, style, drag }: SortableItemProps<any>, ref: any) => {
-  return (
-    <li style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
-      {data.name}
-    </li>
-  );
-}));
+const SortItem = memo(
+  forwardRef(({ data, style, drag }: SortableItemProps<any>, ref: any) => {
+    console.log('刷新 - 1:', data.name);
+    return (
+      <li style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
+        {data.name}
+      </li>
+    );
+  })
+);
 
 const x = [];
 
-for (let i = 0; i < 1; i++) {
+for (let i = 0; i < 20; i++) {
   x.push(i);
 }
 
@@ -50,7 +53,10 @@ const Template: Story<SortableProps> = (args) => {
   const [items, setItems] = useState(
     x.reduce((array, item) => {
       array.push(
-        ...heros.map((name, id) => ({ id: String(id) + '-' + item, name: name + '-' + item, type: 'sortable-card' }))
+        ...heros.map((name, id) => ({
+          id: String(id) + '-' + item,
+          name: name + `(${String(id) + '-' + item})`,
+        }))
       );
       return array;
     }, [])
@@ -66,12 +72,11 @@ const Template: Story<SortableProps> = (args) => {
   return (
     <DndProvider backend={HTML5Backend}>
       <AsanySortable
-        accept={['sortable-card']}
         tag="ul"
         style={{ listStyle: 'none', padding: 0 }}
         items={items}
         onChange={handleChange}
-        itemRender={SortItem}
+        itemRender={(props, ref) => <SortItem {...props} ref={ref} />}
         layout={args.layout}
       />
     </DndProvider>

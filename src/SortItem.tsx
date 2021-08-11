@@ -18,6 +18,7 @@ function SortItem({ data, itemRender, dragCondition, className, style, ...props 
   const [version, forceRender] = useReducer((s) => s + 1, 0);
   const events = useEventManager();
   const io = useSortableSelector((state) => state.io);
+  const visibled = useSortableSelector((state) => state.activeIds.includes(data.id));
   const [{ style: additionStyle, className: additionClassName, remove, update }, ref, drag] = useSortItem(
     data.type,
     data,
@@ -50,12 +51,20 @@ function SortItem({ data, itemRender, dragCondition, className, style, ...props 
     const el = ref.current!;
     el.dataset['id'] = data.id;
     io.observe(el);
-    // events.on(EVENT_ITEMRENDER_RERENDER, forceRender);
     return () => {
       io.unobserve(el);
-      // events.off(EVENT_ITEMRENDER_RERENDER, forceRender);
     };
   }, [io]);
+
+  useEffect(() => {
+    if (!visibled) {
+      return;
+    }
+    events.on(EVENT_ITEMRENDER_RERENDER, forceRender);
+    return () => {
+      events.off(EVENT_ITEMRENDER_RERENDER, forceRender);
+    };
+  }, [visibled]);
 
   return React.useMemo(() => {
     const props = {

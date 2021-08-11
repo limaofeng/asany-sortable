@@ -177,10 +177,8 @@ export enum SortableActionType {
   drop = 'drop',
   // Flipper 动画使用
   moving = 'moving',
-  // 激活
-  wakeup = 'activate',
-  // 睡觉
-  sleep = 'sleep',
+  // 设置可以看见的元素
+  observed = 'observed',
 }
 
 export interface SortableAction {
