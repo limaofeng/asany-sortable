@@ -68,10 +68,10 @@ function Sortable(
     className,
     layout = 'list',
     children,
-    rerender = true,
     accept = defaultAccept,
     items: propsItems,
     itemRender,
+    rerender = typeof itemRender === 'function',
     dragCondition,
     style,
   } = props;
