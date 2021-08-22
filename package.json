@@ -42,11 +42,11 @@
   "size-limit": [
     {
       "path": "dist/sortable.cjs.production.min.js",
-      "limit": "10 KB"
+      "limit": "100 KB"
     },
     {
       "path": "dist/sortable.esm.js",
-      "limit": "10 KB"
+      "limit": "50 KB"
     }
   ],
   "devDependencies": {
