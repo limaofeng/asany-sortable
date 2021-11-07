@@ -71,8 +71,6 @@ export interface ISortableItem extends DragObjectWithType {
    * 可删除
    */
   deleteable?: boolean;
-
-  children: never[];
 }
 
 export interface ISortableItemInternalData extends ISortableItem {

@@ -2,7 +2,7 @@ import React, { forwardRef, memo, useState } from 'react';
 import { Meta, Story } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import AsanySortable, { SortableProps, SortableItemProps } from '../src';
+import AsanySortable, { SortableItemProps } from '../src';
 
 const meta: Meta = {
   title: 'Demos/基础',
@@ -27,8 +27,7 @@ const defaultStyle = {
 
 const SortItem = memo(
   forwardRef((props: SortableItemProps<any>, ref: any) => {
-    const { data, remove, update, style, drag, className, dragging, clicked } = props;
-    // console.log('changed', data.name, dragging, clicked, className);
+    const { data, style, drag, className } = props;
     return (
       <li className={className} style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
         {data.name}
@@ -48,7 +47,7 @@ const Template: Story<any> = (args) => {
     { id: '7', name: '王七' },
   ]);
 
-  const handleChange = (data, event) => {
+  const handleChange = (data: any, event: any) => {
     args.onChange(data, event);
     setItems(data);
   };
@@ -67,8 +66,8 @@ const Template: Story<any> = (args) => {
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
-export const Basic = Template.bind({});
+export const Default = Template.bind({});
 
-Basic.storyName = '基础';
+Default.storyName = '基础';
 
-Basic.args = {};
+Default.args = {};

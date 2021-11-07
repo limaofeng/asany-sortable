@@ -1,6 +1,6 @@
 import classnames from 'classnames';
-import { isEqual } from 'lodash';
-import { throttle } from 'lodash-es';
+import isEqual from 'lodash/isEqual';
+import throttle from 'lodash/throttle';
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef } from 'react';
 import { DropTargetMonitor, useDrop, XYCoord } from 'react-dnd';
 import { isElement } from 'react-is';

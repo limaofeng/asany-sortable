@@ -69,9 +69,9 @@
     "cssnano": "^5.0.7",
     "eslint-plugin-prettier": "^3.4.0",
     "husky": "^7.0.1",
+    "identity-obj-proxy": "^3.0.0",
     "less": "^4.1.1",
     "less-loader": "^7.3.0",
-    "lodash-es": "^4.17.21",
     "pinst": "^2.1.6",
     "postcss": "^8.3.6",
     "postcss-modules": "^4.2.2",
@@ -89,10 +89,22 @@
   },
   "dependencies": {
     "immutability-helper": "^3.1.1",
+    "lodash-es": "^4.17.21",
     "react-flip-toolkit": "^7.0.13"
   },
   "resolutions": {
     "**/@typescript-eslint/eslint-plugin": "^4.1.1",
     "**/@typescript-eslint/parser": "^4.1.1"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^lodash-es$": "lodash",
+      "^lodash-es/.*": "lodash",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|less)$": "identity-obj-proxy"
+    },
+    "setupFiles": [
+      "<rootDir>/test/globals-test.ts"
+    ]
   }
 }

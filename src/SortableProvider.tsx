@@ -12,7 +12,7 @@ import {
   SortableSubscribeCallback,
 } from './typings';
 import { assign, generateUUID, useDeepCompareEffect } from './utils/index';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 
 export const SortableStoreContext = React.createContext<ISortableContext>({
   getState: () => ({}),
