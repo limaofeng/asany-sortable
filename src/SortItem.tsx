@@ -3,19 +3,33 @@ import React, { CSSProperties, useEffect, useMemo, useReducer } from 'react';
 
 import { useSortItem } from './hooks';
 import useSortableSelector, { useEventManager } from './SortableProvider';
-import { DragCondition, EVENT_ITEMRENDER_RERENDER, ISortableItem, SortableItemContentRender } from './typings';
+import {
+  DragCondition,
+  EVENT_ITEMRENDER_RERENDER,
+  ISortableItem,
+  SortableItemContentRender,
+  SortableItemProps,
+} from './typings';
 import { injectAnime } from './utils';
 
-export interface SortItemProps {
+export interface SortItemProps<T extends ISortableItem> {
   index: number;
-  data: ISortableItem;
+  data: T;
   className?: string;
   style?: CSSProperties;
   dragCondition?: DragCondition;
-  itemRender: SortableItemContentRender;
+  itemRender: SortableItemContentRender<T>;
 }
 
-function SortItem({ index, data, itemRender, dragCondition, className, style, ...props }: SortItemProps) {
+function SortItem<T extends ISortableItem>({
+  index,
+  data,
+  itemRender,
+  dragCondition,
+  className,
+  style,
+  ...props
+}: SortItemProps<T>) {
   const [version, forceRender] = useReducer((s) => s + 1, 0);
   const events = useEventManager();
   const io = useSortableSelector((state) => state.io);
@@ -57,13 +71,12 @@ function SortItem({ index, data, itemRender, dragCondition, className, style, ..
   }, [visibled]);
 
   return React.useMemo(() => {
-    const props = {
-      clicked,
+    const props: SortableItemProps<T> = {
       dragging: isDragging,
       animated: animatedMerged,
       className: classNameMerged,
       style: styleMerged,
-      data,
+      data: data as any,
       level,
       index,
       remove,

@@ -36,7 +36,7 @@ function buildItems(items: ISortableItem[] | undefined, children: React.ReactNod
     return items;
   }
   const retItems: ISortableItem[] = [];
-  const nodes = React.Children.toArray(children) as React.ReactElement<SortItemProps>[];
+  const nodes = React.Children.toArray(children) as React.ReactElement<SortItemProps<any>>[];
   for (let i = 0; i < nodes.length; i += 1) {
     const props = nodes[i].props;
     retItems.push({ ...props.data });
@@ -44,17 +44,17 @@ function buildItems(items: ISortableItem[] | undefined, children: React.ReactNod
   return retItems;
 }
 
-function buildItemRender(
-  itemRender: SortableItemContentRender | SortableItemContentRenderFunc | undefined,
+function buildItemRender<T extends ISortableItem>(
+  itemRender: SortableItemContentRender<T> | SortableItemContentRenderFunc<T> | undefined,
   children: React.ReactNodeArray | undefined
-): SortableItemContentRender {
+): SortableItemContentRender<T> {
   if (!itemRender && (!children || !React.Children.count(children))) {
     throw 'Sortable 的 itemRender 及 children 不能同时为 NULL';
   }
   if (!!itemRender) {
     return itemRender;
   }
-  const nodes = React.Children.toArray(children) as React.ReactElement<SortItemProps>[];
+  const nodes = React.Children.toArray(children) as React.ReactElement<SortItemProps<T>>[];
   const tempNode = nodes[0];
   return (props, ref) => React.cloneElement(tempNode, { ...props, ref } as any);
 }
@@ -84,7 +84,7 @@ function Sortable<T extends ISortableItem>(
   } = props;
   const { direction = layout == 'grid' ? 'horizontal' : 'vertical' } = props;
   const items = buildItems(propsItems, children);
-  const [innerItemRender] = useState<SortableItemContentRender>(() => buildItemRender(itemRender, children));
+  const [innerItemRender] = useState<SortableItemContentRender<T>>(() => buildItemRender<T>(itemRender, children));
 
   return (
     <SortableProvider
@@ -103,7 +103,7 @@ function Sortable<T extends ISortableItem>(
         onDrop={onDrop}
         allowDrop={allowDrop}
         onChange={onChange}
-        itemRender={innerItemRender}
+        itemRender={innerItemRender as any}
         direction={direction}
         dragCondition={dragCondition}
         layout={layout}
@@ -112,8 +112,8 @@ function Sortable<T extends ISortableItem>(
   );
 }
 
-interface SortableCoreProps {
-  itemRender: SortableItemContentRender;
+interface SortableCoreProps<T extends ISortableItem> {
+  itemRender: SortableItemContentRender<T>;
   direction: SortableDirection;
   layout: SortableLayout;
   accept: string[];
@@ -128,8 +128,8 @@ interface SortableCoreProps {
   onClick?: (e: React.MouseEvent) => void;
 }
 
-const SortableCore = React.forwardRef(function (
-  { itemRender, onChange, dragCondition, ...props }: SortableCoreProps,
+const SortableCore = React.forwardRef(function <T extends ISortableItem>(
+  { itemRender, onChange, dragCondition, ...props }: SortableCoreProps<T>,
   ref: MutableRefObject<HTMLElement | null> | ((instance: HTMLElement | null) => void) | null
 ) {
   const items = useSortableSelector((state) => state.items);
@@ -263,7 +263,13 @@ const SortableCore = React.forwardRef(function (
       >
         {items.map((item, index) => (
           <Flipped key={item.id} flipId={item.id}>
-            <SortItem index={index} key={item.id} itemRender={itemRender} data={item} dragCondition={dragCondition} />
+            <SortItem
+              index={index}
+              key={item.id}
+              itemRender={itemRender as any}
+              data={item}
+              dragCondition={dragCondition}
+            />
           </Flipped>
         ))}
       </Flipper>

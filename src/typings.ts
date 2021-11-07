@@ -217,7 +217,6 @@ export type AnimatedProps = {
 };
 
 export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
-  clicked: boolean;
   dragging: boolean;
   indicator: number;
   level: number;
