@@ -1,3 +1,7 @@
+## [0.1.25](https://github.com/limaofeng/asany-sortable/compare/v0.1.24...v0.1.25) (2021-11-07)
+
+
+
 ## [0.1.24](https://github.com/limaofeng/asany-sortable/compare/v0.1.23...v0.1.24) (2021-11-07)
 
 
