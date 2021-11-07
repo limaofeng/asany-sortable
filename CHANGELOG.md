@@ -1,3 +1,12 @@
+## [0.1.23](https://github.com/limaofeng/asany-sortable/compare/v0.1.22...v0.1.23) (2021-11-07)
+
+
+### Features
+
+*  添加 mode 选择 ([c43c615](https://github.com/limaofeng/asany-sortable/commit/c43c6155f1050cf1f78d750d0da17557c74730aa))
+
+
+
 ## [0.1.22](https://github.com/limaofeng/asany-sortable/compare/v0.1.21...v0.1.22) (2021-08-11)
 
 
