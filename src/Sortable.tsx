@@ -61,8 +61,8 @@ function buildItemRender(
 
 const defaultAccept = [DEFAULT_ITEM_TYPE];
 
-function Sortable(
-  props: SortableProps,
+function Sortable<T extends ISortableItem>(
+  props: SortableProps<T>,
   ref: MutableRefObject<HTMLElement | null> | ((instance: HTMLElement | null) => void) | null
 ) {
   const {

@@ -237,14 +237,14 @@ export type SortableItemRefObject =
   | ((instance: HTMLElement | null) => void)
   | any;
 
-export type SortableItemContentRenderFunc = (
-  props: SortableItemProps,
+export type SortableItemContentRenderFunc<T extends ISortableItem> = (
+  props: SortableItemProps<T>,
   ref: SortableItemRefObject
 ) => React.ReactElement;
 
-export type SortableItemContentRender =
-  | React.ForwardRefExoticComponent<PropsWithoutRef<SortableItemProps> & SortableItemRefObject>
-  | SortableItemContentRenderFunc;
+export type SortableItemContentRender<T extends ISortableItem> =
+  | React.ForwardRefExoticComponent<PropsWithoutRef<SortableItemProps<T>> & SortableItemRefObject>
+  | SortableItemContentRenderFunc<T>;
 
 export interface SortLog {
   source: string;
@@ -281,7 +281,7 @@ export type AllowDropFunc = (info: AllowDropInfo) => boolean;
 
 export type OnDrop = (e: { node: any; dragNode: any; dropPosition: number }) => void;
 
-export interface SortableProps {
+export interface SortableProps<T extends ISortableItem> {
   mode?: Mode;
   /**
    * 方向
@@ -320,9 +320,9 @@ export interface SortableProps {
    */
   dragCondition?: DragCondition;
 
-  items?: ISortableItem[];
+  items?: T[];
 
-  itemRender?: SortableItemContentRender | SortableItemContentRenderFunc;
+  itemRender?: SortableItemContentRender<T> | SortableItemContentRenderFunc<T>;
   /**
    * 父组件刷新时 itemRender 是否重新渲染
    * 默认: true
@@ -332,12 +332,12 @@ export interface SortableProps {
    * 元素移入
    * @experimental
    */
-  onDragover?: (item: ISortableItem) => void;
+  onDragover?: (item: T) => void;
   /**
    * 元素移出
    * @experimental
    */
-  onDragout?: (item: ISortableItem) => void;
+  onDragout?: (item: T) => void;
   /**
    * 是否允许拖拽时放置在该节点
    */
