@@ -1,5 +1,6 @@
 import { CSSProperties, RefCallback, RefObject, useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
 import { DragSourceMonitor, useDrag } from 'react-dnd';
+import classnames from 'classnames';
 
 import { assign, sleep } from '../utils/index';
 import useSelector, { useEventManager, useSortableDispatch } from '../SortableProvider';
@@ -18,6 +19,7 @@ type SortItemState<RT extends HTMLElement> = [
     clicked: boolean;
     isDragging: boolean;
     className?: string;
+    indicator: number;
     style: CSSProperties;
     update: (data: ISortableItem) => void;
     remove: () => void;
@@ -32,6 +34,7 @@ export type SortItemDragStartEvent = {
 };
 
 interface SortItemOptions {
+  index: number;
   sortable?: boolean;
   dragCondition?: DragCondition;
   onDragStart?: (event: SortItemDragStartEvent) => void;
@@ -50,6 +53,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
   const sortableId = useSelector((state) => state.id);
   const dragging = useSelector((state) => state.dragging);
   const dataRef = useRef<ISortableItem>(data);
+  const stateRef = useRef<{ indicator: number }>({ indicator: NaN });
   const [, forceRender] = useReducer((s) => s + 1, 0);
   const clicked = useRef(false);
 
@@ -69,6 +73,16 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     }
   }, []);
 
+  const handleIndicator = useCallback(({ id, position }) => {
+    if (dataRef.current.id == id) {
+      stateRef.current.indicator = position;
+      forceRender();
+    } else if (!isNaN(stateRef.current.indicator)) {
+      stateRef.current.indicator = NaN;
+      forceRender();
+    }
+  }, []);
+
   const handleMouseDown = useCallback(() => {
     if (handleCanDrag('拖拽检测' as any)) {
       setClicked(true);
@@ -82,10 +96,12 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     if (!el) {
       return;
     }
+    events.on(SortableActionType.indicator, handleIndicator);
     el.addEventListener('mousedown', handleMouseDown);
     el.addEventListener('mouseup', handleMouseUp);
     el.addEventListener('dragend', handleDragend);
     return () => {
+      events.off(SortableActionType.indicator, handleIndicator);
       el.removeEventListener('mouseDown', handleMouseDown);
       el.removeEventListener('mouseUp', handleMouseUp);
       el.removeEventListener('dragend', handleDragend);
@@ -151,6 +167,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
         });
         return;
       }
+      events.emit(SortableActionType.indicator, { id: item, position: NaN });
       events.emit(SortableActionType.reset, {
         item,
         target: item!._sortable,
@@ -193,6 +210,11 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     });
   }, [sortableId]);
 
+  // useEffect(() => {
+  //   // console.log('handleUpdate pos', pos, options?.index);
+  //   handleUpdate({ ...dataRef.current, index: options?.index, pos: [...pos, options?.index] });
+  // }, [options?.index, pos.join('-')]);
+
   return [
     {
       clicked: clicked.current,
@@ -200,7 +222,10 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
       update: handleUpdate,
       remove: handleRemove,
       style: containerStyle,
-      className: isDragging ? 'sortable-item sortable-item-dragging' : 'sortable-item',
+      indicator: stateRef.current.indicator,
+      className: classnames('sortable-item', {
+        'sortable-item-dragging': isDragging,
+      }),
     },
     ref,
     drag as any,

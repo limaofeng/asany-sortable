@@ -71,9 +71,13 @@ export interface ISortableItem extends DragObjectWithType {
    * 可删除
    */
   deleteable?: boolean;
+
+  children: never[];
 }
 
 export interface ISortableItemInternalData extends ISortableItem {
+  index?: number;
+  pos?: number[];
   _originalSortable: string;
   _sortable?: string;
   _registered?: string;
@@ -179,6 +183,10 @@ export enum SortableActionType {
   moving = 'moving',
   // 设置可以看见的元素
   observed = 'observed',
+  // 指示器
+  indicator = 'indicator',
+  // 更新 POS
+  UPDATE_POS = 'UPDATE_POS',
 }
 
 export interface SortableAction {
@@ -213,6 +221,9 @@ export type AnimatedProps = {
 export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
   clicked: boolean;
   dragging: boolean;
+  indicator: number;
+  level: number;
+  index: number;
   data: T;
   animated: AnimatedProps;
   remove: () => void;
@@ -246,6 +257,7 @@ export interface SortLog {
 
 export interface ISortableState {
   id: string;
+  pos: number[];
   dragging?: ISortableItemInternalData;
   backup: ISortableItemInternalData[];
   items: ISortableItemInternalData[];
@@ -257,11 +269,22 @@ export interface ISortableState {
   io: IntersectionObserver;
 }
 
-export type Relation = 'before' | 'after' | 'none';
+export type Relation = number; // = 'before' | 'after' | 'none';
 
 export type DragCondition = (data: ISortableItem, monitor: DragSourceMonitor<ISortableItem>) => boolean;
 
+export type DropCondition = () => boolean;
+
+export type Mode = 'wysiwyg' | 'indicator';
+
+export type AllowDropInfo = { node: any; dragNode: any; dropPosition: number };
+
+export type AllowDropFunc = (info: AllowDropInfo) => boolean;
+
+export type OnDrop = (e: { node: any; dragNode: any; dropPosition: number }) => void;
+
 export interface SortableProps {
+  mode?: Mode;
   /**
    * 方向
    */
@@ -317,6 +340,18 @@ export interface SortableProps {
    * @experimental
    */
   onDragout?: (item: ISortableItem) => void;
+  /**
+   * 是否允许拖拽时放置在该节点
+   */
+  allowDrop?: AllowDropFunc;
 
   style?: CSSProperties;
+  /**
+   * 位置, 用于嵌套定位
+   */
+  pos?: number[];
+  /**
+   * 放置元素
+   */
+  onDrop?: OnDrop;
 }

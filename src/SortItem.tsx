@@ -7,6 +7,7 @@ import { DragCondition, EVENT_ITEMRENDER_RERENDER, ISortableItem, SortableItemCo
 import { injectAnime } from './utils';
 
 export interface SortItemProps {
+  index: number;
   data: ISortableItem;
   className?: string;
   style?: CSSProperties;
@@ -14,15 +15,17 @@ export interface SortItemProps {
   itemRender: SortableItemContentRender;
 }
 
-function SortItem({ data, itemRender, dragCondition, className, style, ...props }: SortItemProps) {
+function SortItem({ index, data, itemRender, dragCondition, className, style, ...props }: SortItemProps) {
   const [version, forceRender] = useReducer((s) => s + 1, 0);
   const events = useEventManager();
   const io = useSortableSelector((state) => state.io);
+  const level = useSortableSelector((state) => state.id.split('/').length);
   const visibled = useSortableSelector((state) => state.activeIds.includes(data.id));
-  const [{ style: aste, className: acn, remove, update, isDragging, clicked }, ref, drag] = useSortItem(
+  const [{ style: aste, className: acn, remove, update, isDragging, clicked, indicator }, ref, drag] = useSortItem(
     data.type,
     data,
     {
+      index,
       sortable: data.sortable,
       dragCondition,
     }
@@ -61,8 +64,11 @@ function SortItem({ data, itemRender, dragCondition, className, style, ...props 
       className: classNameMerged,
       style: styleMerged,
       data,
+      level,
+      index,
       remove,
       update,
+      indicator,
       drag,
     };
     if (typeof itemRender === 'function') {
@@ -70,7 +76,7 @@ function SortItem({ data, itemRender, dragCondition, className, style, ...props 
     }
     (props as any).ref = ref;
     return React.createElement(itemRender, props);
-  }, [version, styleMerged, classNameMerged, animatedMerged, data, clicked, isDragging]);
+  }, [version, level, styleMerged, classNameMerged, animatedMerged, data, clicked, isDragging, indicator]);
 }
 
 export default React.memo(SortItem);

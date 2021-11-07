@@ -20,6 +20,7 @@ export const SortableStoreContext = React.createContext<ISortableContext>({
 } as any);
 
 interface SortableProviderProps {
+  pos: number[];
   items: ISortableItem[];
   rerender: boolean;
   deps: ReadonlyArray<any>;
@@ -96,12 +97,13 @@ const delayDispatch = (callback: any, delay: number) => {
       const sleeps = Array.from(sleepBuffer);
       sleepBuffer.clear();
       exec = undefined;
+      console.log('>>>>>', wakeups, sleeps);
       callback(wakeups, sleeps);
     }, delay);
   };
 };
 
-function useStore(items: ISortableItem[]): ISortableContext {
+function useStore(items: ISortableItem[], pos: number[]): ISortableContext {
   const prevStore = useSortableStore();
   const [SORTABLE_ID] = useState(generateUUID());
 
@@ -117,6 +119,20 @@ function useStore(items: ISortableItem[]): ISortableContext {
         return update(state, {
           id: {
             $set: action.payload,
+          },
+        });
+      }
+      if (action.type === SortableActionType.UPDATE_POS) {
+        state.items.forEach((item, index) => {
+          item.index = index;
+          item.pos = [...action.payload, index];
+        });
+        return update(state, {
+          pos: {
+            $set: action.payload,
+          },
+          items: {
+            $set: state.items,
           },
         });
       }
@@ -330,7 +346,7 @@ function useStore(items: ISortableItem[]): ISortableContext {
     if (isEqual(inside, outside)) {
       return;
     }
-    // console.log('isOverCurrent Change items', state.id);
+    console.log('isOverCurrent Change items', state.id);
     (dispatch as any)({
       type: SortableActionType.init,
       payload: {
@@ -352,7 +368,7 @@ function useStore(items: ISortableItem[]): ISortableContext {
                 item
               );
         }),
-        activeIds: [],
+        activeIds: state.activeIds,
         io: state.io,
         backup: [],
         logs: [],
@@ -362,14 +378,21 @@ function useStore(items: ISortableItem[]): ISortableContext {
     });
   }, [outside]);
 
+  useEffect(() => {
+    (dispatch as any)({
+      type: SortableActionType.UPDATE_POS,
+      payload: pos,
+    });
+  }, [pos.join('-')]);
+
   useEffect(() => () => state.io.disconnect(), []);
 
   return store;
 }
 
 export const SortableProvider = (props: SortableProviderProps) => {
-  const { deps = [], items, children, rerender } = props;
-  const store = useStore(items);
+  const { deps = [], pos, items, children, rerender } = props;
+  const store = useStore(items, pos);
 
   useEffect(() => {
     rerender && store.eventEmitter.emit(EVENT_ITEMRENDER_RERENDER);

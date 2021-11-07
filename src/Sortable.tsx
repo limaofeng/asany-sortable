@@ -26,7 +26,10 @@ import {
   SortableProps,
   SortableRemoveEvent,
   SortableTag,
+  Mode,
+  AllowDropFunc,
 } from './typings';
+import { OnDrop } from '.';
 
 function buildItems(items: ISortableItem[] | undefined, children: React.ReactNodeArray | undefined) {
   if (items) {
@@ -64,7 +67,11 @@ function Sortable(
 ) {
   const {
     onChange,
+    pos = [],
+    mode = 'wysiwyg',
     tag = 'div',
+    onDrop,
+    allowDrop,
     className,
     layout = 'list',
     children,
@@ -80,13 +87,21 @@ function Sortable(
   const [innerItemRender] = useState<SortableItemContentRender>(() => buildItemRender(itemRender, children));
 
   return (
-    <SortableProvider rerender={rerender} items={items} deps={[layout, tag, direction, className, dragCondition]}>
+    <SortableProvider
+      rerender={rerender}
+      items={items}
+      pos={pos}
+      deps={[layout, allowDrop, tag, direction, className, dragCondition]}
+    >
       <SortableCore
         tag={tag}
         ref={ref}
+        mode={mode}
         className={classnames('sortable-container', `sortable-${layout}-${direction}`, className)}
         style={style}
         accept={accept}
+        onDrop={onDrop}
+        allowDrop={allowDrop}
         onChange={onChange}
         itemRender={innerItemRender}
         direction={direction}
@@ -102,9 +117,12 @@ interface SortableCoreProps {
   direction: SortableDirection;
   layout: SortableLayout;
   accept: string[];
+  mode: Mode;
   tag: SortableTag;
   className?: string;
   style?: CSSProperties;
+  onDrop?: OnDrop;
+  allowDrop?: AllowDropFunc;
   onChange?: SortableChange;
   dragCondition?: DragCondition;
   onClick?: (e: React.MouseEvent) => void;
@@ -243,9 +261,9 @@ const SortableCore = React.forwardRef(function (
         onComplete={handleComplete}
         flipKey={items.map((item) => item.id).join(',')}
       >
-        {items.map((item) => (
+        {items.map((item, index) => (
           <Flipped key={item.id} flipId={item.id}>
-            <SortItem key={item.id} itemRender={itemRender} data={item} dragCondition={dragCondition} />
+            <SortItem index={index} key={item.id} itemRender={itemRender} data={item} dragCondition={dragCondition} />
           </Flipped>
         ))}
       </Flipper>

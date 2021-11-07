@@ -49,36 +49,43 @@ export function getMonitorCoord(
       detection: SortableDirection
     ) {
       const currentRec = [left, top, left + width, top + height];
-      if (!isRectangleOverlap(currentRec, [x, y, x + w, y + h])) {
-        return 'none';
+      let overlap = isRectangleOverlap(currentRec, [x, y, x + w, y + h]);
+      if (!overlap) {
+        return NaN;
       }
       const x1 = x + w / 2;
       const y1 = y + h / 2;
       const source = getRec(itemRect, layoutRect);
       const target = [x, y, x + w, y + h];
-      const overlap = isRectangleOverlap(currentRec, [x1, y1, x1, y1]);
       if (layout === 'grid') {
+        overlap = isRectangleOverlap(currentRec, [x1, y1, x1, y1]);
         if (!overlap) {
-          return 'none';
+          return NaN;
         }
-        if (source[3] < target[1] || source[2] < target[0]) {
-          return 'after';
+        if (source[3] <= target[1] || source[2] <= target[0]) {
+          return 1;
         }
-        return 'before';
+        return -1;
       } else if (detection === 'vertical' && (overlap as any).y) {
-        if (source[3] < target[1] || source[2] < target[0]) {
-          return 'after';
+        const mx1 = left + width / 2;
+        const my1 = top + height / 2;
+        if (height > h) {
+          overlap = isRectangleOverlap(currentRec, [x1, y1, x1, y1]);
         } else {
-          return 'before';
+          overlap = isRectangleOverlap([mx1, my1, mx1, my1], target);
         }
+        if (!(overlap as any).y) {
+          return NaN;
+        }
+        return my1 - y1;
       } else if (detection === 'horizontal' && (overlap as any).x) {
-        if (source[3] < target[1] || source[2] < target[0]) {
-          return 'after';
+        if (source[2] <= target[0]) {
+          return 1;
         } else {
-          return 'before';
+          return -1;
         }
       }
-      return 'none';
+      return NaN;
     },
     compare: (_: ICoord): Relation => {
       throw '未实现逻辑';
@@ -131,10 +138,10 @@ export function getInsertIndex(
   const index = items.findIndex((data) => {
     const coord = getItemCoord(ref, data);
     const relation = coord.compare(moveItem, layout, direction);
-    if (relation === 'none') {
+    if (isNaN(relation)) {
       return false;
     }
-    if (relation === 'after') {
+    if (relation > 0) {
       addition = 1;
     }
     return true;

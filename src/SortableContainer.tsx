@@ -4,6 +4,7 @@ import { throttle } from 'lodash-es';
 import React, { CSSProperties, useCallback, useEffect, useMemo, useRef } from 'react';
 import { DropTargetMonitor, useDrop, XYCoord } from 'react-dnd';
 import { isElement } from 'react-is';
+import { OnDrop } from '.';
 
 import useSortableSelector, { useEventManager, useSortableDispatch } from './SortableProvider';
 import {
@@ -17,10 +18,14 @@ import {
   SortableLayout,
   SortableTag,
   SortLog,
+  Mode,
+  AllowDropFunc,
 } from './typings';
 import { findInnerIndex, getInsertIndex, getItemCoord, getMonitorCoord } from './utils';
 
 interface SortableContainerTemp {
+  node?: ISortableItemInternalData;
+  dropPosition?: number;
   lastLog?: SortLog;
   items: ISortableItemInternalData[];
   moving?: boolean;
@@ -34,6 +39,7 @@ interface SortableContainerTemp {
 type MoveArgs = [string, string, Relation];
 
 interface SortableContainerProps {
+  mode: Mode;
   accept: string[];
   style?: CSSProperties;
   tag: SortableTag;
@@ -42,10 +48,12 @@ interface SortableContainerProps {
   children: React.ReactNode;
   className?: string;
   removable?: boolean;
+  onDrop?: OnDrop;
+  allowDrop?: AllowDropFunc;
 }
 
 function SortableContainer(props: SortableContainerProps, externalRef: any) {
-  const { tag, className, style, children, accept, layout, direction } = props;
+  const { mode, onDrop, allowDrop, tag, className, style, children, accept, layout, direction } = props;
 
   const dispatch = useSortableDispatch();
   const events = useEventManager();
@@ -59,7 +67,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
 
   const pendingUpdateFn = useRef<SortableAction>();
   const requestedFrame = useRef<any>();
-  const prevMoveData = useRef<MoveArgs>(['', '', 'after']);
+  const prevMoveData = useRef<MoveArgs>(['', '', 1]);
   const temp = useRef<SortableContainerTemp>({ id, items, lastLog, activities: [] });
   const throttled = useRef(
     throttle(async (item: ISortableItemInternalData, monitor: DropTargetMonitor) => {
@@ -71,30 +79,58 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
       if (!clientOffset) {
         return;
       }
-      const _moveItem = activities.find((data) => data.id === item.id);
-      let itemRect: DOMRect;
-      if (!_moveItem?._rect) {
+      const moveItem = activities.find((data) => data.id === item.id);
+      const itemRect = moveItem?._rect || item._rect;
+      if (!itemRect || !item._rect) {
         return;
       }
-      itemRect = _moveItem._rect;
-      const moveItem = getMonitorCoord(ref, itemRect, clientOffset);
+      const moveItemRect = getMonitorCoord(ref, itemRect, clientOffset);
       for (const data of activities) {
-        const coord = getItemCoord(ref, data);
-        const relation = coord.compare(moveItem, layout, direction);
-        if (relation !== 'none') {
-          return move(item.id, data.id, relation);
+        if (!ref.current?.getBoundingClientRect() && !data._rect) {
+          // console.error(ref.current, data._rect);
+          continue;
+        }
+        let coord: any;
+        try {
+          coord = getItemCoord(ref, data);
+        } catch (e) {
+          console.log(e, id, activities, temp.current.activities);
+          continue;
+        }
+
+        const relation = coord.compare(moveItemRect, layout, direction);
+        if (!isNaN(relation)) {
+          if (mode == 'wysiwyg') {
+            if (item.id == data.id) {
+              continue;
+            }
+            if (allowDrop && !allowDrop({ node: data, dragNode: item, dropPosition: relation })) {
+              continue;
+            }
+            return move(item.id, data.id, relation);
+          } else {
+            if (item.id == data.id) {
+              events.emit(SortableActionType.indicator, { id: data.id, position: NaN });
+              temp.current.node = undefined;
+              continue;
+            }
+            if (allowDrop && !allowDrop({ node: data, dragNode: item, dropPosition: relation })) {
+              events.emit(SortableActionType.indicator, { id: data.id, position: NaN });
+              temp.current.node = undefined;
+              console.error('now allowDrop', ref.current, data._rect);
+              continue;
+            }
+            temp.current.node = data;
+            temp.current.dropPosition = relation;
+            events.emit(SortableActionType.indicator, { id: data.id, position: relation });
+          }
         }
       }
     }, 60)
   );
 
-  temp.current.activities = useMemo(() => {
-    const { items } = temp.current;
-    return items.filter((item) => activeIds.includes(item.id));
-  }, [activeIds]);
-
   const resetMoveData = useCallback(() => {
-    prevMoveData.current = ['', '', 'after'];
+    prevMoveData.current = ['', '', 1];
   }, []);
 
   const move = useCallback(function (source: string, target: string, relation: Relation) {
@@ -107,10 +143,10 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     if (sourceIndex == targetIndex || targetIndex == -1 || targetIndex == -1) {
       return;
     }
-    if (relation === 'before' && sourceIndex < targetIndex) {
+    if (relation < 0 && sourceIndex < targetIndex) {
       return;
     }
-    if (relation === 'after' && sourceIndex > targetIndex) {
+    if (relation > 0 && sourceIndex > targetIndex) {
       return;
     }
     // 忽略移动中元素的交换请求
@@ -193,6 +229,11 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
         target: id,
         source: item._originalSortable,
       });
+      if (onDrop && !!temp.current.node) {
+        onDrop({ node: temp.current.node, dragNode: item, dropPosition: temp.current.dropPosition! });
+        events.emit(SortableActionType.indicator, { id: temp.current.node, position: NaN });
+        temp.current.node = undefined;
+      }
       return { type: 'sort', sortable: id, id: item.id };
     },
     collect: (monitor: DropTargetMonitor<ISortableItemInternalData, SortableDropResult>) => {
@@ -215,8 +256,14 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
   temp.current.items = items;
   temp.current.moving = moving;
   temp.current.isOverCurrent = isOverCurrent;
+  temp.current.activities = useMemo(() => {
+    return items.filter((item) => activeIds.includes(item.id));
+  }, [activeIds, items]);
 
   useEffect(() => {
+    if (mode != 'wysiwyg') {
+      return;
+    }
     const { item, id, monitor, items } = temp.current;
     if (!item || !canDrop || !monitor) {
       return;
