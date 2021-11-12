@@ -1,3 +1,12 @@
+## [0.1.27](https://github.com/limaofeng/asany-sortable/compare/v0.1.26...v0.1.27) (2021-11-12)
+
+
+### Bug Fixes
+
+* 修复刷新数据时, pos 丢失的问题 ([5c30152](https://github.com/limaofeng/asany-sortable/commit/5c30152c9b89b61e217249d3dc2073a45b217438))
+
+
+
 ## [0.1.26](https://github.com/limaofeng/asany-sortable/compare/v0.1.25...v0.1.26) (2021-11-07)
 
 
