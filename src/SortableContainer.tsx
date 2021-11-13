@@ -94,7 +94,7 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
         try {
           coord = getItemCoord(ref, data);
         } catch (e) {
-          console.log(e, id, activities, temp.current.activities);
+          // console.log(e, id, activities, temp.current.activities);
           continue;
         }
 

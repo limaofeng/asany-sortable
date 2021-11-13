@@ -97,7 +97,6 @@ const delayDispatch = (callback: any, delay: number) => {
       const sleeps = Array.from(sleepBuffer);
       sleepBuffer.clear();
       exec = undefined;
-      console.log('>>>>>', wakeups, sleeps);
       callback(wakeups, sleeps);
     }, delay);
   };
@@ -356,17 +355,15 @@ function useStore(items: ISortableItem[], pos: number[]): ISortableContext {
             return item;
           }
           const { _originalSortable, _sortable, _rect, ...prevData } = data;
-          return isEqual(prevData, item)
-            ? data
-            : assign(
-                {
-                  ...data,
-                  get _rect() {
-                    return data?._rect;
-                  },
-                },
-                item
-              );
+          if (isEqual(prevData, item)) {
+            return data;
+          }
+          return assign(
+            {
+              ...data,
+            },
+            item
+          );
         }),
         pos: state.pos,
         activeIds: state.activeIds,

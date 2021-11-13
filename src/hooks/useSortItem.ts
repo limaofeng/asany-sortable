@@ -118,7 +118,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
         },
       },
     });
-  }, []);
+  }, [options?.index]);
 
   const handleCanDrag = useCallback(
     (monitor: DragSourceMonitor<ISortableItemInternalData>) => {
