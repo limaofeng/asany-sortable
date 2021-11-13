@@ -1,3 +1,12 @@
+## [0.1.28](https://github.com/limaofeng/asany-sortable/compare/v0.1.27...v0.1.28) (2021-11-13)
+
+
+### Bug Fixes
+
+* 修复计算问题 ([6f3499c](https://github.com/limaofeng/asany-sortable/commit/6f3499cd6d5fc02bbd39b6968e87ea0d9e116bca))
+
+
+
 ## [0.1.27](https://github.com/limaofeng/asany-sortable/compare/v0.1.26...v0.1.27) (2021-11-12)
 
 
