@@ -210,11 +210,6 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     });
   }, [sortableId]);
 
-  // useEffect(() => {
-  //   // console.log('handleUpdate pos', pos, options?.index);
-  //   handleUpdate({ ...dataRef.current, index: options?.index, pos: [...pos, options?.index] });
-  // }, [options?.index, pos.join('-')]);
-
   return [
     {
       clicked: clicked.current,

@@ -350,11 +350,9 @@ function useStore(items: ISortableItem[], pos: number[]): ISortableContext {
     (dispatch as any)({
       type: SortableActionType.init,
       payload: {
-        items: outside.map((item, index) => {
+        items: outside.map((item) => {
           const data = state.items.find((x) => x.id == item.id);
           if (!data) {
-            item.index = index;
-            item.pos = state.pos ? [...state.pos, index] : item.pos;
             return item;
           }
           const { _originalSortable, _sortable, _rect, ...prevData } = data;
@@ -379,6 +377,9 @@ function useStore(items: ISortableItem[], pos: number[]): ISortableContext {
         id: state.id,
       },
     });
+    if (!!state.pos) {
+      (dispatch as any)({ type: SortableActionType.UPDATE_POS, payload: state.pos });
+    }
   }, [outside]);
 
   useEffect(() => {
