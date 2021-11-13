@@ -1,3 +1,12 @@
+## [0.1.29](https://github.com/limaofeng/asany-sortable/compare/v0.1.28...v0.1.29) (2021-11-13)
+
+
+### Bug Fixes
+
+* 解决 _rect 排序错误 ([d41ab4e](https://github.com/limaofeng/asany-sortable/commit/d41ab4eecd3f84f88613d0ece72d89f6530b52f5))
+
+
+
 ## [0.1.28](https://github.com/limaofeng/asany-sortable/compare/v0.1.27...v0.1.28) (2021-11-13)
 
 
