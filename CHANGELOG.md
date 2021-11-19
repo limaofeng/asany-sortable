@@ -1,3 +1,12 @@
+## [0.1.30](https://github.com/limaofeng/asany-sortable/compare/v0.1.29...v0.1.30) (2021-11-19)
+
+
+### Bug Fixes
+
+* sortable 替换 dragCondition 配置，支持 bool 设置 ([f6d11c7](https://github.com/limaofeng/asany-sortable/commit/f6d11c70afbc4b70dd974721af0eb6f37c950b6a))
+
+
+
 ## [0.1.29](https://github.com/limaofeng/asany-sortable/compare/v0.1.28...v0.1.29) (2021-11-13)
 
 
