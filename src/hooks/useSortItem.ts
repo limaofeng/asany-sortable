@@ -35,8 +35,7 @@ export type SortItemDragStartEvent = {
 
 interface SortItemOptions {
   index: number;
-  sortable?: boolean;
-  dragCondition?: DragCondition;
+  draggable: DragCondition;
   onDragStart?: (event: SortItemDragStartEvent) => void;
   onDragEnd?: () => void;
 }
@@ -46,7 +45,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
   data: T,
   options?: SortItemOptions
 ): SortItemState<RT> {
-  const { sortable = true, dragCondition } = options || {};
+  const { draggable } = options || {};
 
   const dispatch = useSortableDispatch();
   const events = useEventManager();
@@ -122,9 +121,12 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
 
   const handleCanDrag = useCallback(
     (monitor: DragSourceMonitor<ISortableItemInternalData>) => {
-      return dragCondition ? dragCondition(dataRef.current, monitor) : sortable;
+      if (typeof draggable === 'function') {
+        return draggable(dataRef.current, monitor);
+      }
+      return !!draggable;
     },
-    [sortable]
+    [draggable]
   );
 
   const [{ isDragging }, drag, connectDrag] = useDrag<ISortableItemInternalData, any, any>({

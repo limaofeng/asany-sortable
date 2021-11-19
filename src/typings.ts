@@ -268,7 +268,7 @@ export interface ISortableState {
 
 export type Relation = number; // = 'before' | 'after' | 'none';
 
-export type DragCondition = (data: ISortableItem, monitor: DragSourceMonitor<ISortableItem>) => boolean;
+export type DragCondition = boolean | ((data: ISortableItem, monitor: DragSourceMonitor<ISortableItem>) => boolean);
 
 export type DropCondition = () => boolean;
 
@@ -314,10 +314,6 @@ export interface SortableProps<T extends ISortableItem> {
    * 排序改变时触发，drop 及 remove 也会触发该函数
    */
   onChange: SortableChange;
-  /**
-   * 拖拽条件
-   */
-  dragCondition?: DragCondition;
 
   items?: T[];
 
@@ -341,6 +337,10 @@ export interface SortableProps<T extends ISortableItem> {
    * 是否允许拖拽时放置在该节点
    */
   allowDrop?: AllowDropFunc;
+  /**
+   * 是否可以拖拽
+   */
+  draggable?: DragCondition;
 
   style?: CSSProperties;
   /**

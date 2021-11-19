@@ -17,7 +17,7 @@ export interface SortItemProps<T extends ISortableItem> {
   data: T;
   className?: string;
   style?: CSSProperties;
-  dragCondition?: DragCondition;
+  draggable: DragCondition;
   itemRender: SortableItemContentRender<T>;
 }
 
@@ -25,8 +25,8 @@ function SortItem<T extends ISortableItem>({
   index,
   data,
   itemRender,
-  dragCondition,
   className,
+  draggable,
   style,
   ...props
 }: SortItemProps<T>) {
@@ -40,8 +40,7 @@ function SortItem<T extends ISortableItem>({
     data,
     {
       index,
-      sortable: data.sortable,
-      dragCondition,
+      draggable,
     }
   );
 

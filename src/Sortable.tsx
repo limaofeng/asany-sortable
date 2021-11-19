@@ -71,6 +71,7 @@ function Sortable<T extends ISortableItem>(
     mode = 'wysiwyg',
     tag = 'div',
     onDrop,
+    draggable = true,
     allowDrop,
     className,
     layout = 'list',
@@ -79,7 +80,6 @@ function Sortable<T extends ISortableItem>(
     items: propsItems,
     itemRender,
     rerender = typeof itemRender === 'function',
-    dragCondition,
     style,
   } = props;
   const { direction = layout == 'grid' ? 'horizontal' : 'vertical' } = props;
@@ -91,7 +91,7 @@ function Sortable<T extends ISortableItem>(
       rerender={rerender}
       items={items}
       pos={pos}
-      deps={[layout, allowDrop, tag, direction, className, dragCondition]}
+      deps={[layout, allowDrop, tag, direction, className, draggable]}
     >
       <SortableCore
         tag={tag}
@@ -100,12 +100,12 @@ function Sortable<T extends ISortableItem>(
         className={classnames('sortable-container', `sortable-${layout}-${direction}`, className)}
         style={style}
         accept={accept}
+        draggable={draggable}
         onDrop={onDrop}
         allowDrop={allowDrop}
         onChange={onChange}
         itemRender={innerItemRender as any}
         direction={direction}
-        dragCondition={dragCondition}
         layout={layout}
       />
     </SortableProvider>
@@ -123,13 +123,13 @@ interface SortableCoreProps<T extends ISortableItem> {
   style?: CSSProperties;
   onDrop?: OnDrop;
   allowDrop?: AllowDropFunc;
+  draggable: DragCondition;
   onChange?: SortableChange;
-  dragCondition?: DragCondition;
   onClick?: (e: React.MouseEvent) => void;
 }
 
 const SortableCore = React.forwardRef(function <T extends ISortableItem>(
-  { itemRender, onChange, dragCondition, ...props }: SortableCoreProps<T>,
+  { itemRender, onChange, draggable, ...props }: SortableCoreProps<T>,
   ref: MutableRefObject<HTMLElement | null> | ((instance: HTMLElement | null) => void) | null
 ) {
   const items = useSortableSelector((state) => state.items);
@@ -263,13 +263,7 @@ const SortableCore = React.forwardRef(function <T extends ISortableItem>(
       >
         {items.map((item, index) => (
           <Flipped key={item.id} flipId={item.id}>
-            <SortItem
-              index={index}
-              key={item.id}
-              itemRender={itemRender as any}
-              data={item}
-              dragCondition={dragCondition}
-            />
+            <SortItem index={index} key={item.id} draggable={draggable} itemRender={itemRender as any} data={item} />
           </Flipped>
         ))}
       </Flipper>
