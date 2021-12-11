@@ -76,6 +76,7 @@ function Sortable<T extends ISortableItem>(
     className,
     layout = 'list',
     children,
+    empty,
     accept = defaultAccept,
     items: propsItems,
     itemRender,
@@ -96,6 +97,7 @@ function Sortable<T extends ISortableItem>(
       <SortableCore
         tag={tag}
         ref={ref}
+        empty={empty}
         mode={mode}
         className={classnames('sortable-container', `sortable-${layout}-${direction}`, className)}
         style={style}
@@ -122,6 +124,7 @@ interface SortableCoreProps<T extends ISortableItem> {
   className?: string;
   style?: CSSProperties;
   onDrop?: OnDrop;
+  empty?: React.ReactNode;
   allowDrop?: AllowDropFunc;
   draggable: DragCondition;
   onChange?: SortableChange;
@@ -129,7 +132,7 @@ interface SortableCoreProps<T extends ISortableItem> {
 }
 
 const SortableCore = React.forwardRef(function <T extends ISortableItem>(
-  { itemRender, onChange, draggable, ...props }: SortableCoreProps<T>,
+  { empty, itemRender, onChange, draggable, ...props }: SortableCoreProps<T>,
   ref: MutableRefObject<HTMLElement | null> | ((instance: HTMLElement | null) => void) | null
 ) {
   const items = useSortableSelector((state) => state.items);
@@ -266,6 +269,7 @@ const SortableCore = React.forwardRef(function <T extends ISortableItem>(
             <SortItem index={index} key={item.id} draggable={draggable} itemRender={itemRender as any} data={item} />
           </Flipped>
         ))}
+        {!items.length && empty}
       </Flipper>
     </SortableContainer>
   );
