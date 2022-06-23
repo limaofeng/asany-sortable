@@ -1,3 +1,13 @@
+## [0.1.31](https://github.com/limaofeng/asany-sortable/compare/v0.1.30...v0.1.31) (2022-06-23)
+
+
+### Features
+
+* 支持 empty 属性 ([cb9fe44](https://github.com/limaofeng/asany-sortable/commit/cb9fe442beccb4dc57e17a7182b6a507cea6df8b))
+* 支持自定义 DragPreview ([585ad15](https://github.com/limaofeng/asany-sortable/commit/585ad15b4d78e8caa58c45ab0a8f0193e6dc01b8))
+
+
+
 ## [0.1.30](https://github.com/limaofeng/asany-sortable/compare/v0.1.29...v0.1.30) (2021-11-19)
 
 
