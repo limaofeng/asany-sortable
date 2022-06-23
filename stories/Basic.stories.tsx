@@ -26,17 +26,17 @@ const defaultStyle = {
 };
 
 const SortItem = memo(
-  forwardRef((props: SortableItemProps<any>, ref: any) => {
+  forwardRef((props: SortableItemProps<any> & any, ref: any) => {
     const { data, style, drag, className } = props;
     return (
-      <li className={className} style={{ ...defaultStyle, ...style }} ref={drag(ref)}>
+      <li className={className} style={{ ...defaultStyle, ...style }} ref={drag && drag(ref)}>
         {data.name}
       </li>
     );
   })
 );
 
-const Template: Story<any> = (args) => {
+const Template: Story<any> = args => {
   const [items, setItems] = useState([
     { id: '1', name: '小明' },
     { id: '2', name: '陈二' },
@@ -59,6 +59,7 @@ const Template: Story<any> = (args) => {
         items={items}
         onChange={handleChange}
         itemRender={SortItem}
+        preview={(data) => <SortItem dragging={false} data={data} />}
       />
     </DndProvider>
   );

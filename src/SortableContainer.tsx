@@ -86,6 +86,9 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
       }
       const moveItemRect = getMonitorCoord(ref, itemRect, clientOffset);
       for (const data of activities) {
+        if (moveItem?.id == data.id) {
+          continue;
+        }
         if (!ref.current?.getBoundingClientRect() && !data._rect) {
           // console.error(ref.current, data._rect);
           continue;
@@ -143,12 +146,13 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     if (sourceIndex == targetIndex || targetIndex == -1 || targetIndex == -1) {
       return;
     }
-    if (relation < 0 && sourceIndex < targetIndex) {
-      return;
-    }
-    if (relation > 0 && sourceIndex > targetIndex) {
-      return;
-    }
+    // console.log('move', relation, sourceIndex, targetIndex);
+    // if (relation < 0 && sourceIndex < targetIndex) {
+    //   return;
+    // }
+    // if (relation > 0 && sourceIndex > targetIndex) {
+    //   return;
+    // }
     // 忽略移动中元素的交换请求
     if (
       moving &&

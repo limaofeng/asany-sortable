@@ -75,16 +75,9 @@ const data = [
 ];
 
 const InternalContainer = forwardRef(
-  (
-    { itemRef, itemClassName, itemStyle, itemData, children, ...props }: any,
-    boxRef: any
-  ) => {
+  ({ itemRef, itemClassName, itemStyle, itemData, children, ...props }: any, boxRef: any) => {
     return (
-      <li
-        className={itemClassName}
-        style={{ ...defaultStyle, ...itemStyle, padding: 0 }}
-        ref={itemRef}
-      >
+      <li className={itemClassName} style={{ ...defaultStyle, ...itemStyle, padding: 0 }} ref={itemRef}>
         <span ref={boxRef} style={{ display: 'block', padding: '0.5rem 1rem' }}>
           {itemData.name}
           <ul {...props}>{children}</ul>
@@ -94,10 +87,7 @@ const InternalContainer = forwardRef(
   }
 );
 
-const SortItem = forwardRef(function (
-  { data, style, drag, className, update }: any,
-  itemRef: any
-) {
+const SortItem = forwardRef(function({ data, style, drag, className, update }: any, itemRef: any) {
   const [items, setItems] = useState(data.children || []);
   const handleChange = (values, event) => {
     setItems(values);
@@ -105,40 +95,30 @@ const SortItem = forwardRef(function (
     dispatchAction(data, event);
   };
 
-  drag(itemRef);
+  drag && drag(itemRef);
 
   if (data.type == 'card-box') {
     return (
       <NestedSortable
-        tag={
-          <InternalContainer
-            itemData={data}
-            itemRef={itemRef}
-            itemClassName={className}
-            itemStyle={style}
-          />
-        }
+        tag={<InternalContainer itemData={data} itemRef={itemRef} itemClassName={className} itemStyle={style} />}
         items={items}
         onChange={handleChange}
       />
     );
   }
   return (
-    <li
-      ref={itemRef}
-      className={className}
-      style={{ ...defaultStyle, ...style }}
-    >
+    <li ref={itemRef} className={className} style={{ ...defaultStyle, ...style }}>
       {data.name}
     </li>
   );
 });
 
-const NestedSortable = ({ tag = 'ul', items, onChange: handleChange }: any) => {
+const NestedSortable = ({ tag = 'ul', items, preview, onChange: handleChange }: any) => {
   return (
     <AsanySortable
       items={items}
       itemRender={SortItem}
+      preview={preview}
       style={{ listStyle: 'none', padding: 0 }}
       accept={['sortable-card', 'card-box']}
       tag={tag}
@@ -147,7 +127,7 @@ const NestedSortable = ({ tag = 'ul', items, onChange: handleChange }: any) => {
   );
 };
 
-const Template: Story<SortableProps> = (args) => {
+const Template: Story<SortableProps> = args => {
   const [items, setItems] = useState(data);
 
   const handleChange = (data, event) => {
@@ -159,7 +139,11 @@ const Template: Story<SortableProps> = (args) => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <NestedSortable items={items} onChange={handleChange} />
+      <NestedSortable
+        items={items}
+        preview={(data) => <SortItem dragging={false} data={data} />}
+        onChange={handleChange}
+      />
     </DndProvider>
   );
 };

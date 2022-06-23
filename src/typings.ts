@@ -7,6 +7,7 @@ import {
   RefAttributes,
   RefCallback,
   RefObject,
+  ReactNode,
 } from 'react';
 import { DragSourceMonitor, DropTargetMonitor } from 'react-dnd';
 
@@ -161,6 +162,8 @@ export enum SortableActionType {
   init = 'init',
   register = 'register',
   UPDATE_ID = 'UPDATE_ID',
+  // 自定拖拽预览
+  UPDATE_PREVIEW = 'UPDATE_PREVIEW',
   // 更新状态
   update = 'update',
   // 移动
@@ -216,7 +219,7 @@ export type AnimatedProps = {
   [key: string]: string;
 };
 
-export interface SortableItemProps<T extends ISortableItem = ISortableItem> {
+export interface SortableItemProps<T extends ISortableItem = ISortableItem & { [key: string]: any }> {
   dragging: boolean;
   indicator: number;
   level: number;
@@ -257,6 +260,7 @@ export interface ISortableState {
   pos: number[];
   dragging?: ISortableItemInternalData;
   backup: ISortableItemInternalData[];
+  preview: boolean;
   items: ISortableItemInternalData[];
   activeIds: string[];
   logs: SortLog[];
@@ -280,7 +284,14 @@ export type AllowDropFunc = (info: AllowDropInfo) => boolean;
 
 export type OnDrop = (e: { node: any; dragNode: any; dropPosition: number }) => void;
 
-export interface SortableProps<T extends ISortableItem> {
+export type DragPreviewRenderer = (
+  data: ISortableItem & {
+    [key: string]: any;
+  },
+  type: string
+) => ReactNode;
+
+export interface SortableProps<T extends ISortableItem = any> {
   mode?: Mode;
   /**
    * 方向
@@ -351,4 +362,8 @@ export interface SortableProps<T extends ISortableItem> {
    * 放置元素
    */
   onDrop?: OnDrop;
+  /**
+   * 自定义预览
+   */
+  preview?: DragPreviewRenderer;
 }

@@ -70,9 +70,9 @@ const Template: Story<SortableProps> = (args) => {
         tag="ul"
         style={{ listStyle: 'none', padding: 0 }}
         items={items}
-        onChange={handleChange}
         itemRender={SortItem}
         {...args}
+        onChange={handleChange}
       />
     </DndProvider>
   );

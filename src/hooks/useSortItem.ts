@@ -1,4 +1,4 @@
-import { CSSProperties, RefCallback, RefObject, useCallback, useEffect, useMemo, useReducer, useRef } from 'react';
+import { CSSProperties, RefCallback, RefObject, useCallback, useEffect, useReducer, useRef } from 'react';
 import { DragSourceMonitor, useDrag } from 'react-dnd';
 import classnames from 'classnames';
 
@@ -11,8 +11,7 @@ import {
   ISortableItemInternalData,
   SortableActionType,
 } from '../typings';
-
-const style: React.CSSProperties = {};
+import { getEmptyImage } from 'react-dnd-html5-backend';
 
 type SortItemState<RT extends HTMLElement> = [
   {
@@ -50,6 +49,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
   const dispatch = useSortableDispatch();
   const events = useEventManager();
   const sortableId = useSelector((state) => state.id);
+  const preview = useSelector((state) => state.preview);
   const dragging = useSelector((state) => state.dragging);
   const dataRef = useRef<ISortableItem>(data);
   const stateRef = useRef<{ indicator: number }>({ indicator: NaN });
@@ -72,7 +72,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     }
   }, []);
 
-  const handleIndicator = useCallback(({ id, position }) => {
+  const handleIndicator = useCallback(({ id, position }: any) => {
     if (dataRef.current.id == id) {
       stateRef.current.indicator = position;
       forceRender();
@@ -178,10 +178,13 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
     },
   });
 
-  connectDrag(ref);
-
-  const opacity = isDragging ? 0.6 : 1;
-  const containerStyle = useMemo(() => ({ ...style, opacity }), [opacity]);
+  useEffect(() => {
+    if (preview) {
+      connectDrag(getEmptyImage(), { captureDraggingState: true });
+    } else {
+      connectDrag(ref);
+    }
+  }, [preview]);
 
   useEffect(() => {
     if (!isDragging || !!dragging) {
@@ -218,7 +221,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
       isDragging,
       update: handleUpdate,
       remove: handleRemove,
-      style: containerStyle,
+      style: {},
       indicator: stateRef.current.indicator,
       className: classnames('sortable-item', {
         'sortable-item-dragging': isDragging,

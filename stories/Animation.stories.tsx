@@ -29,21 +29,21 @@ const defaultStyle = {
   backgroundColor: 'white',
 };
 
-const SortItem = forwardRef((props: SortableItemProps<any>, ref: any) => {
+const SortItem = forwardRef((props: SortableItemProps<any> & any, ref: any) => {
   const { data, style, drag, className, animated } = props;
   return (
     <li
       {...(Animation.args.enableAnimation ? animated : {})}
       className={className}
       style={{ ...defaultStyle, ...style }}
-      ref={drag(ref)}
+      ref={drag && drag(ref)}
     >
       {data.name}
     </li>
   );
 });
 
-const Template: Story<any> = (args) => {
+const Template: Story<any> = args => {
   const [items, setItems] = useState([
     { id: '1', name: '小明', type: 'sortable-card' },
     { id: '2', name: '陈二', type: 'sortable-card' },
@@ -68,6 +68,7 @@ const Template: Story<any> = (args) => {
         tag="ul"
         style={{ listStyle: 'none', padding: 0 }}
         items={items}
+        preview={(data) => <SortItem dragging={false} data={data} />}
         onChange={handleChange}
         itemRender={SortItem}
       />

@@ -23,6 +23,7 @@ interface SortableProviderProps {
   pos: number[];
   items: ISortableItem[];
   rerender: boolean;
+  preview: boolean;
   deps: ReadonlyArray<any>;
   children: React.ReactNode;
 }
@@ -78,7 +79,7 @@ export const useSortableStore = () => useContext(SortableStoreContext);
 const delayDispatch = (callback: any, delay: number) => {
   const wakeupBuffer = new Set<string>();
   const sleepBuffer = new Set<string>();
-  let exec: NodeJS.Timeout | undefined;
+  let exec: number | undefined;
   return (type: 'wakeup' | 'sleep', value: string) => {
     if (type == 'wakeup') {
       wakeupBuffer.add(value);
@@ -98,11 +99,11 @@ const delayDispatch = (callback: any, delay: number) => {
       sleepBuffer.clear();
       exec = undefined;
       callback(wakeups, sleeps);
-    }, delay);
+    }, delay) as any;
   };
 };
 
-function useStore(items: ISortableItem[], pos: number[]): ISortableContext {
+function useStore(items: ISortableItem[], pos: number[], preview: boolean): ISortableContext {
   const prevStore = useSortableStore();
   const [SORTABLE_ID] = useState(generateUUID());
 
@@ -117,6 +118,13 @@ function useStore(items: ISortableItem[], pos: number[]): ISortableContext {
       if (action.type === SortableActionType.UPDATE_ID) {
         return update(state, {
           id: {
+            $set: action.payload,
+          },
+        });
+      }
+      if (action.type === SortableActionType.UPDATE_PREVIEW) {
+        return update(state, {
+          preview: {
             $set: action.payload,
           },
         });
@@ -275,6 +283,7 @@ function useStore(items: ISortableItem[], pos: number[]): ISortableContext {
       logs: [],
       id: SORTABLE_ID,
       moving: false,
+      preview: prevStore.getState().preview || preview,
       activeIds: [],
       io: new IntersectionObserver(
         (ioes) => {
@@ -332,6 +341,21 @@ function useStore(items: ISortableItem[], pos: number[]): ISortableContext {
       payload: parentId + '/' + SORTABLE_ID,
     });
   }, [parentId]);
+
+  const parentPreview = useSortableSelector((state) => state.preview);
+  useEffect(() => {
+    if (parentPreview == undefined) {
+      (dispatch as any)({
+        type: SortableActionType.UPDATE_PREVIEW,
+        payload: preview,
+      });
+      return;
+    }
+    (dispatch as any)({
+      type: SortableActionType.UPDATE_PREVIEW,
+      payload: parentPreview,
+    });
+  }, [preview, parentPreview]);
 
   useEffect(() => {
     store.getState = () => state;
@@ -392,8 +416,8 @@ function useStore(items: ISortableItem[], pos: number[]): ISortableContext {
 }
 
 export const SortableProvider = (props: SortableProviderProps) => {
-  const { deps = [], pos, items, children, rerender } = props;
-  const store = useStore(items, pos);
+  const { deps = [], pos, items, children, preview, rerender } = props;
+  const store = useStore(items, pos, preview);
 
   useEffect(() => {
     rerender && store.eventEmitter.emit(EVENT_ITEMRENDER_RERENDER);

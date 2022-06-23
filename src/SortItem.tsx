@@ -18,6 +18,7 @@ export interface SortItemProps<T extends ISortableItem> {
   className?: string;
   style?: CSSProperties;
   draggable: DragCondition;
+  preview?: boolean;
   itemRender: SortableItemContentRender<T>;
 }
 
@@ -28,6 +29,7 @@ function SortItem<T extends ISortableItem>({
   className,
   draggable,
   style,
+  preview,
   ...props
 }: SortItemProps<T>) {
   const [version, forceRender] = useReducer((s) => s + 1, 0);
