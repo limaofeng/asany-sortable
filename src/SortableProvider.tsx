@@ -283,7 +283,7 @@ function useStore(items: ISortableItem[], pos: number[], preview: boolean): ISor
       logs: [],
       id: SORTABLE_ID,
       moving: false,
-      preview: prevStore.getState().preview || preview,
+      preview: !!preview,
       activeIds: [],
       io: new IntersectionObserver(
         (ioes) => {
@@ -343,6 +343,7 @@ function useStore(items: ISortableItem[], pos: number[], preview: boolean): ISor
   }, [parentId]);
 
   const parentPreview = useSortableSelector((state) => state.preview);
+
   useEffect(() => {
     if (parentPreview == undefined) {
       (dispatch as any)({
@@ -394,6 +395,7 @@ function useStore(items: ISortableItem[], pos: number[], preview: boolean): ISor
         io: state.io,
         backup: [],
         logs: [],
+        preview: !!parentPreview || !!preview,
         moving: false,
         id: state.id,
       },
