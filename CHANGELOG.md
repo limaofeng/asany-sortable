@@ -1,3 +1,12 @@
+## [0.1.32](https://github.com/limaofeng/asany-sortable/compare/v0.1.31...v0.1.32) (2022-06-23)
+
+
+### Bug Fixes
+
+* 修复重置数据时， preview 设置丢失的问题 ([4b768fc](https://github.com/limaofeng/asany-sortable/commit/4b768fc7f2fd05abcb619fe1678f63a51d7015ce))
+
+
+
 ## [0.1.31](https://github.com/limaofeng/asany-sortable/compare/v0.1.30...v0.1.31) (2022-06-23)
 
 
