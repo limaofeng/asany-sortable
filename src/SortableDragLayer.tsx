@@ -2,6 +2,7 @@ import type { CSSProperties, FC } from 'react';
 import React from 'react';
 import type { XYCoord } from 'react-dnd';
 import { useDragLayer } from 'react-dnd';
+import useSortableSelector from './SortableProvider';
 import { DragPreviewRenderer } from './typings';
 
 const layerStyles: CSSProperties = {
@@ -50,12 +51,14 @@ export interface CustomDragLayerProps {
 }
 
 const SortableDragLayer: FC<CustomDragLayerProps> = (props) => {
+  const sortableId = useSortableSelector((state) => state.id);
+
   const { isDragging, item, itemType, initialOffset, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
     itemType: monitor.getItemType(),
     initialOffset: monitor.getInitialSourceClientOffset(),
     currentOffset: monitor.getSourceClientOffset(),
-    isDragging: monitor.isDragging(),
+    isDragging: monitor.isDragging() && sortableId == monitor.getItem()?._sortable,
   }));
 
   if (!isDragging) {
