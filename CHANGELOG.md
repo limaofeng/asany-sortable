@@ -1,3 +1,12 @@
+## [0.1.33](https://github.com/limaofeng/asany-sortable/compare/v0.1.32...v0.1.33) (2022-06-24)
+
+
+### Bug Fixes
+
+* 解决多实例时 Preview 错乱的问题 ([992c66f](https://github.com/limaofeng/asany-sortable/commit/992c66fa249b9b8922c339dbaad1e059e4bbddeb))
+
+
+
 ## [0.1.32](https://github.com/limaofeng/asany-sortable/compare/v0.1.31...v0.1.32) (2022-06-23)
 
 
