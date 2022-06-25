@@ -3,6 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import AsanySortable, { SortableProps } from '../src';
+import { dragPreview } from '../src/utils';
 
 const meta: Meta = {
   title: 'Demos/嵌套',
@@ -102,6 +103,7 @@ const SortItem = forwardRef(function({ data, style, drag, className, update }: a
       <NestedSortable
         tag={<InternalContainer itemData={data} itemRef={itemRef} itemClassName={className} itemStyle={style} />}
         items={items}
+        preview={dragPreview(<SortItem style={{ listStyle: 'none' }} />)}
         onChange={handleChange}
       />
     );
@@ -141,7 +143,7 @@ const Template: Story<SortableProps> = args => {
     <DndProvider backend={HTML5Backend}>
       <NestedSortable
         items={items}
-        preview={(data) => <SortItem dragging={false} data={data} />}
+        preview={dragPreview(<SortItem style={{ listStyle: 'none' }} />)}
         onChange={handleChange}
       />
     </DndProvider>

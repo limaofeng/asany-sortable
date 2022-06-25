@@ -239,13 +239,18 @@ export type SortableItemRefObject =
   | ((instance: HTMLElement | null) => void)
   | any;
 
-export type SortableItemContentRenderFunc<T extends ISortableItem> = (
+type SortableItemContentRenderFunc<T extends ISortableItem> = (
   props: SortableItemProps<T>,
   ref: SortableItemRefObject
 ) => React.ReactElement;
 
-export type SortableItemContentRender<T extends ISortableItem> =
+type SortableItemContentRender<T extends ISortableItem> =
   | React.ForwardRefExoticComponent<PropsWithoutRef<SortableItemProps<T>> & SortableItemRefObject>
+  | SortableItemContentRenderFunc<T>;
+
+export type SortableItemRender<T extends ISortableItem> =
+  | SortableItemContentRender<T>
+  | React.ReactElement<SortableItemProps<T>>
   | SortableItemContentRenderFunc<T>;
 
 export interface SortLog {
@@ -288,8 +293,17 @@ export type DragPreviewRenderer = (
   data: ISortableItem & {
     [key: string]: any;
   },
-  type: string
+  options: {
+    style: CSSProperties;
+    sortableId: string;
+    type: string;
+    rect: DOMRect;
+  }
 ) => ReactNode;
+
+export type DragPreviewOptions =
+  | DragPreviewRenderer
+  | { render: DragPreviewRenderer; axisLocked?: boolean; snapToGrid?: boolean; container?: Element | DocumentFragment };
 
 export interface SortableProps<T extends ISortableItem = any> {
   mode?: Mode;
@@ -312,7 +326,7 @@ export interface SortableProps<T extends ISortableItem = any> {
   /**
    * 子元素
    */
-  children?: React.ReactNodeArray;
+  children?: React.ReactNode[];
   /**
    * CSS ClassName
    */
@@ -328,7 +342,7 @@ export interface SortableProps<T extends ISortableItem = any> {
 
   items?: T[];
 
-  itemRender?: SortableItemContentRender<T> | SortableItemContentRenderFunc<T>;
+  itemRender?: SortableItemRender<T>;
   /**
    * 父组件刷新时 itemRender 是否重新渲染
    * 默认: true
@@ -365,5 +379,5 @@ export interface SortableProps<T extends ISortableItem = any> {
   /**
    * 自定义预览
    */
-  preview?: DragPreviewRenderer;
+  preview?: DragPreviewOptions;
 }

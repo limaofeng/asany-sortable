@@ -1,9 +1,10 @@
 import type { CSSProperties, FC } from 'react';
 import React from 'react';
-import type { XYCoord } from 'react-dnd';
 import { useDragLayer } from 'react-dnd';
+import ReactDOM from 'react-dom';
 import useSortableSelector from './SortableProvider';
-import { DragPreviewRenderer } from './typings';
+import { DragPreviewRenderer, SortableDirection, SortableLayout } from './typings';
+import { getItemStyles } from './utils';
 
 const layerStyles: CSSProperties = {
   position: 'fixed',
@@ -15,45 +16,20 @@ const layerStyles: CSSProperties = {
   height: '100%',
 };
 
-export function snapToGrid(x: number, y: number): [number, number] {
-  const snappedX = Math.round(x / 32) * 32;
-  const snappedY = Math.round(y / 32) * 32;
-  return [snappedX, snappedY];
-}
-
-function getItemStyles(initialOffset: XYCoord | null, currentOffset: XYCoord | null, isSnapToGrid: boolean) {
-  if (!initialOffset || !currentOffset) {
-    return {
-      display: 'none',
-    };
-  }
-
-  let { x, y } = currentOffset;
-
-  if (isSnapToGrid) {
-    x -= initialOffset.x;
-    y -= initialOffset.y;
-    [x, y] = snapToGrid(x, y);
-    x += initialOffset.x;
-    y += initialOffset.y;
-  }
-
-  const transform = `translate(${x}px, ${y}px)`;
-  return {
-    transform,
-    WebkitTransform: transform,
-  };
-}
-
 export interface CustomDragLayerProps {
+  snapToGrid?: boolean;
+  axisLocked?: boolean;
   render: DragPreviewRenderer;
-  snapToGrid: boolean;
+  container?: Element | DocumentFragment;
+  direction: SortableDirection;
+  layout: SortableLayout;
 }
 
 const SortableDragLayer: FC<CustomDragLayerProps> = (props) => {
   const sortableId = useSortableSelector((state) => state.id);
 
-  const { isDragging, item, itemType, initialOffset, currentOffset } = useDragLayer((monitor) => ({
+  const { isDragging, item, itemType, initialOffset, rect, currentOffset } = useDragLayer((monitor) => ({
+    rect: monitor.getItem()?._rect as DOMRect,
     item: monitor.getItem(),
     itemType: monitor.getItemType(),
     initialOffset: monitor.getInitialSourceClientOffset(),
@@ -65,13 +41,31 @@ const SortableDragLayer: FC<CustomDragLayerProps> = (props) => {
     return null;
   }
 
-  return (
+  const dragLayer = (
     <div style={layerStyles}>
-      <div style={getItemStyles(initialOffset, currentOffset, props.snapToGrid)}>
-        {props.render(item, itemType as string)}
-      </div>
+      {props.render(item, {
+        style: {
+          ...getItemStyles(
+            initialOffset,
+            currentOffset,
+            !!props.snapToGrid,
+            props.layout == 'list' && props.axisLocked && props.direction
+          ),
+          width: rect?.width,
+          height: rect?.height,
+        },
+        type: itemType as string,
+        sortableId,
+        rect: rect,
+      })}
     </div>
   );
+
+  if (props.container) {
+    return ReactDOM.createPortal(dragLayer, props.container);
+  }
+
+  return dragLayer;
 };
 
 export default SortableDragLayer;

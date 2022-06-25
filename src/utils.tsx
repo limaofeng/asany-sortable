@@ -1,5 +1,17 @@
+import React from 'react';
+import { CSSProperties } from 'react';
 import { DropTargetMonitor, XYCoord } from 'react-dnd';
-import { ISortableItemInternalData, SortableLayout, SortableDirection, Relation, AnimatedProps } from './typings';
+import {
+  ISortableItemInternalData,
+  SortableLayout,
+  SortableDirection,
+  Relation,
+  AnimatedProps,
+  DragPreviewRenderer,
+  SortableItemProps,
+  SortableItemRefObject,
+  SortableItemRender,
+} from './typings';
 
 export interface ICoord {
   _rect: DOMRect;
@@ -165,3 +177,97 @@ export const injectAnime = (props: any): AnimatedProps => {
   anime.key = key.join(',');
   return anime;
 };
+
+export function snapToGrid(x: number, y: number): [number, number] {
+  const snappedX = Math.round(x / 32) * 32;
+  const snappedY = Math.round(y / 32) * 32;
+  return [snappedX, snappedY];
+}
+
+export function getItemStyles(
+  initialOffset: XYCoord | null,
+  currentOffset: XYCoord | null,
+  isSnapToGrid: boolean,
+  direction?: false | SortableDirection
+) {
+  if (!initialOffset || !currentOffset) {
+    return {
+      display: 'none',
+    };
+  }
+
+  let { x, y } = currentOffset;
+
+  if (isSnapToGrid) {
+    x -= initialOffset.x;
+    y -= initialOffset.y;
+    [x, y] = snapToGrid(x, y);
+    x += initialOffset.x;
+    y += initialOffset.y;
+  }
+
+  if (direction == 'vertical') {
+    x = initialOffset.x;
+  }
+
+  if (direction == 'horizontal') {
+    y = initialOffset.y;
+  }
+
+  const transform = `translate(${x}px, ${y}px)`;
+  return {
+    transform,
+    WebkitTransform: transform,
+  };
+}
+
+export function getScaleItemStyles(style: CSSProperties, scale: number) {
+  if (scale >= 1) {
+    return {
+      transform: `scale(${scale})`,
+      width: style.width,
+      height: style.height,
+    };
+  }
+  const width = (style.width as number) * (1 / scale);
+  const height = (style.height as number) * (1 / scale);
+  const x = -(((width as number) * (1 - scale)) / 2);
+  const y = -(((height as number) * (1 - scale)) / 2);
+  return {
+    transform: `translate(${x}px, ${y}px) scale(${scale})`,
+    width: width,
+    height: height,
+  };
+}
+
+export function renderItem(
+  itemRender: SortableItemRender<any>,
+  props: SortableItemProps<any>,
+  ref?: SortableItemRefObject
+) {
+  if (React.isValidElement(itemRender)) {
+    return React.cloneElement(itemRender, { ...props, ref } as any);
+  }
+  if (typeof itemRender === 'function') {
+    return itemRender(props, ref);
+  }
+  (props as any).ref = ref;
+  return React.createElement(itemRender, props);
+}
+
+export function dragPreview(
+  itemRender: SortableItemRender<any>,
+  options: { props?: any; scale?: number } = {}
+): DragPreviewRenderer {
+  return (data, { style }) => {
+    const props = { data, drag: () => undefined, ...options } as any;
+    if (!!options?.scale) {
+      return (
+        <div style={style}>
+          <div style={getScaleItemStyles(style, options.scale)}>{renderItem(itemRender, props)}</div>
+        </div>
+      );
+    }
+    return <div style={style}>{renderItem(itemRender, props)}</div>;
+  };
+}

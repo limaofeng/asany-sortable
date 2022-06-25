@@ -3,6 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import AsanySortable, { SortableItemProps } from '../src';
+import { dragPreview } from '../src/utils';
 
 const meta: Meta = {
   title: 'Demos/多实例',
@@ -50,7 +51,7 @@ const AsanySortableInstance = (args) => {
       items={items}
       onChange={handleChange}
       itemRender={SortItem}
-      preview={args.preview && ((data) => <SortItem dragging={false} data={data} />)}
+      preview={args.preview && dragPreview(<SortItem style={{ marginRight: 0, listStyle: 'none' }} />)}
     />
   );
 };
@@ -87,7 +88,7 @@ const Template: Story<any> = (args) => {
             preview
           />
         </div>
-        <div>
+        <div style={{ position: 'relative' }}>
           <AsanySortableInstance
             preview
             items={[

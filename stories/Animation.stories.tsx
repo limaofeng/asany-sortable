@@ -3,6 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import AsanySortable, { SortableItemProps } from '../src';
+import { dragPreview } from '../src/utils';
 
 const meta: Meta = {
   title: 'Demos/动画',
@@ -27,6 +28,8 @@ const defaultStyle = {
   marginBottom: '.5rem',
   marginRight: '.5rem',
   backgroundColor: 'white',
+  width: 320,
+  height: 90,
 };
 
 const SortItem = forwardRef((props: SortableItemProps<any> & any, ref: any) => {
@@ -43,7 +46,7 @@ const SortItem = forwardRef((props: SortableItemProps<any> & any, ref: any) => {
   );
 });
 
-const Template: Story<any> = args => {
+const Template: Story<any> = (args) => {
   const [items, setItems] = useState([
     { id: '1', name: '小明', type: 'sortable-card' },
     { id: '2', name: '陈二', type: 'sortable-card' },
@@ -63,15 +66,22 @@ const Template: Story<any> = args => {
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <AsanySortable
-        accept={['sortable-card']}
-        tag="ul"
-        style={{ listStyle: 'none', padding: 0 }}
-        items={items}
-        preview={(data) => <SortItem dragging={false} data={data} />}
-        onChange={handleChange}
-        itemRender={SortItem}
-      />
+      <div style={{ paddingLeft: 100 }}>
+        <AsanySortable
+          accept={['sortable-card']}
+          tag="ul"
+          style={{ listStyle: 'none', padding: 0 }}
+          items={items}
+          preview={{
+            render: dragPreview(<SortItem style={{ marginRight: 0, listStyle: 'none' }} />, {
+              scale: 1.1,
+            }),
+            axisLocked: true,
+          }}
+          onChange={handleChange}
+          itemRender={SortItem}
+        />
+      </div>
     </DndProvider>
   );
 };

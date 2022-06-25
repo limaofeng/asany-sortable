@@ -1,7 +1,7 @@
 import './style/index.less';
 
 import classnames from 'classnames';
-import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import React, { CSSProperties, MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 
 import SortableContainer from './SortableContainer';
@@ -18,8 +18,6 @@ import {
   SortableChangeEventType,
   SortableDirection,
   SortableDropEvent,
-  SortableItemContentRender,
-  SortableItemContentRenderFunc,
   SortableLayout,
   SortableMoveInEvent,
   SortableMoveOutEvent,
@@ -28,12 +26,14 @@ import {
   SortableTag,
   Mode,
   AllowDropFunc,
-  DragPreviewRenderer,
+  SortableItemRender,
+  SortableItemProps,
+  DragPreviewOptions,
 } from './typings';
 import { OnDrop } from '.';
 import SortableDragLayer from './SortableDragLayer';
 
-function buildItems(items: ISortableItem[] | undefined, children: React.ReactNodeArray | undefined) {
+function buildItems(items: ISortableItem[] | undefined, children: React.ReactNode[] | undefined) {
   if (items) {
     return items;
   }
@@ -47,18 +47,17 @@ function buildItems(items: ISortableItem[] | undefined, children: React.ReactNod
 }
 
 function buildItemRender<T extends ISortableItem>(
-  itemRender: SortableItemContentRender<T> | SortableItemContentRenderFunc<T> | undefined,
-  children: React.ReactNodeArray | undefined
-): SortableItemContentRender<T> {
+  itemRender: SortableItemRender<T> | undefined,
+  children: React.ReactNode[] | undefined
+): SortableItemRender<T> {
   if (!itemRender && (!children || !React.Children.count(children))) {
     throw 'Sortable 的 itemRender 及 children 不能同时为 NULL';
   }
   if (!!itemRender) {
     return itemRender;
   }
-  const nodes = React.Children.toArray(children) as React.ReactElement<SortItemProps<T>>[];
-  const tempNode = nodes[0];
-  return (props, ref) => React.cloneElement(tempNode, { ...props, ref } as any);
+  const nodes = React.Children.toArray(children) as React.ReactElement<SortableItemProps<T>>[];
+  return nodes.length > 0 ? nodes[0] : () => <div>No Item Render !!!</div>;
 }
 
 const defaultAccept = [DEFAULT_ITEM_TYPE];
@@ -88,7 +87,7 @@ function Sortable<T extends ISortableItem>(
   } = props;
   const { direction = layout == 'grid' ? 'horizontal' : 'vertical' } = props;
   const items = buildItems(propsItems, children);
-  const [innerItemRender] = useState<SortableItemContentRender<T>>(() => buildItemRender<T>(itemRender, children));
+  const [innerItemRender] = useState<SortableItemRender<T>>(() => buildItemRender<T>(itemRender, children));
 
   return (
     <SortableProvider
@@ -110,7 +109,7 @@ function Sortable<T extends ISortableItem>(
         onDrop={onDrop}
         allowDrop={allowDrop}
         onChange={onChange}
-        itemRender={innerItemRender as any}
+        itemRender={innerItemRender as SortableItemRender<ISortableItem>}
         direction={direction}
         layout={layout}
         preview={preview}
@@ -120,7 +119,7 @@ function Sortable<T extends ISortableItem>(
 }
 
 interface SortableCoreProps<T extends ISortableItem> {
-  itemRender: SortableItemContentRender<T>;
+  itemRender: SortableItemRender<T>;
   direction: SortableDirection;
   layout: SortableLayout;
   accept: string[];
@@ -134,7 +133,7 @@ interface SortableCoreProps<T extends ISortableItem> {
   draggable: DragCondition;
   onChange?: SortableChange;
   onClick?: (e: React.MouseEvent) => void;
-  preview?: DragPreviewRenderer;
+  preview?: DragPreviewOptions;
 }
 
 const SortableCore = React.forwardRef(function <T extends ISortableItem>(
@@ -261,6 +260,16 @@ const SortableCore = React.forwardRef(function <T extends ISortableItem>(
     dispatch({ type: SortableActionType.moving, payload: false });
   }, []);
 
+  const previewOptions = useMemo(() => {
+    if (!preview) {
+      return undefined;
+    }
+    if (typeof preview == 'function') {
+      return { render: preview };
+    }
+    return preview;
+  }, [preview]);
+
   return (
     <SortableContainer {...props} ref={ref}>
       <Flipper
@@ -283,8 +292,8 @@ const SortableCore = React.forwardRef(function <T extends ISortableItem>(
           </Flipped>
         ))}
         {!items.length && empty}
+        {previewOptions && <SortableDragLayer {...previewOptions} layout={props.layout} direction={props.direction} />}
       </Flipper>
-      {preview && <SortableDragLayer snapToGrid={false} render={preview} />}
     </SortableContainer>
   );
 });

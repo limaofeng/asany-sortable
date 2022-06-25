@@ -7,10 +7,10 @@ import {
   DragCondition,
   EVENT_ITEMRENDER_RERENDER,
   ISortableItem,
-  SortableItemContentRender,
   SortableItemProps,
+  SortableItemRender,
 } from './typings';
-import { injectAnime } from './utils';
+import { injectAnime, renderItem } from './utils';
 
 export interface SortItemProps<T extends ISortableItem> {
   index: number;
@@ -19,7 +19,7 @@ export interface SortItemProps<T extends ISortableItem> {
   style?: CSSProperties;
   draggable: DragCondition;
   preview?: boolean;
-  itemRender: SortableItemContentRender<T>;
+  itemRender: SortableItemRender<T>;
 }
 
 function SortItem<T extends ISortableItem>({
@@ -85,11 +85,7 @@ function SortItem<T extends ISortableItem>({
       indicator,
       drag,
     };
-    if (typeof itemRender === 'function') {
-      return itemRender(props, ref);
-    }
-    (props as any).ref = ref;
-    return React.createElement(itemRender, props);
+    return renderItem(itemRender, props, ref);
   }, [version, level, styleMerged, classNameMerged, animatedMerged, data, clicked, isDragging, indicator]);
 }
 
