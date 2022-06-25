@@ -257,14 +257,16 @@ export function renderItem(
 
 export function dragPreview(
   itemRender: SortableItemRender<any>,
-  options: { props?: any; scale?: number } = {}
+  options: { props?: any; scale?: number | (() => number) } = {}
 ): DragPreviewRenderer {
   return (data, { style }) => {
     const props = { data, drag: () => undefined, ...options } as any;
     if (!!options?.scale) {
       return (
         <div style={style}>
-          <div style={getScaleItemStyles(style, options.scale)}>{renderItem(itemRender, props)}</div>
+          <div style={getScaleItemStyles(style, typeof options.scale == 'function' ? options.scale() : options.scale)}>
+            {renderItem(itemRender, props)}
+          </div>
         </div>
       );
     }
