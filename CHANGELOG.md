@@ -1,3 +1,12 @@
+## [0.1.34](https://github.com/limaofeng/asany-sortable/compare/v0.1.33...v0.1.34) (2022-06-25)
+
+
+### Features
+
+* 自定义预览功能完善 ([39d9ac2](https://github.com/limaofeng/asany-sortable/commit/39d9ac2b4774fed4de573ae80f2c62c66342a5ce))
+
+
+
 ## [0.1.33](https://github.com/limaofeng/asany-sortable/compare/v0.1.32...v0.1.33) (2022-06-24)
 
 
