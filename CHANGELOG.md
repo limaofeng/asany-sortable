@@ -1,3 +1,12 @@
+## [0.1.35](https://github.com/limaofeng/asany-sortable/compare/v0.1.34...v0.1.35) (2022-06-25)
+
+
+### Features
+
+* dragPreview scale 参数支持函数 ([b68dabf](https://github.com/limaofeng/asany-sortable/commit/b68dabf8426b3927c0a95073e6b1af3bed6901f0))
+
+
+
 ## [0.1.34](https://github.com/limaofeng/asany-sortable/compare/v0.1.33...v0.1.34) (2022-06-25)
 
 
