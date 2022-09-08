@@ -289,23 +289,19 @@ function SortableContainer(props: SortableContainerProps, externalRef: any) {
     }
   }, [isOverCurrent]);
 
-  let backgroundColor = undefined;
-  if (canDrop) {
-    backgroundColor = 'rgba(68, 171, 255, 0.05)';
-  }
   if (isElement(tag)) {
     return React.cloneElement(tag as any, {
       ref: drop(buildExternalRef(ref)),
       children,
-      className: classnames(className),
-      style: { ...style, backgroundColor },
+      className: classnames(className, { 'sortable-container-isdrop': canDrop }),
+      style: { ...style },
     });
   }
   return React.createElement(tag as any, {
     ref: drop(buildExternalRef(ref)),
     children,
-    className: classnames(className),
-    style: { ...style, backgroundColor },
+    className: classnames(className, { 'sortable-container-isdrop': canDrop }),
+    style: { ...style },
   });
 }
 
