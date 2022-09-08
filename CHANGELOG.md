@@ -1,3 +1,12 @@
+## [0.1.37](https://github.com/limaofeng/asany-sortable/compare/v0.1.36...v0.1.37) (2022-09-08)
+
+
+### Features
+
+* 取消拖拽时的默认，改为 sortable-container-isdrop ([1088015](https://github.com/limaofeng/asany-sortable/commit/108801503dbbd55a83e420c2418f9957bd1424e7))
+
+
+
 ## [0.1.36](https://github.com/limaofeng/asany-sortable/compare/v0.1.35...v0.1.36) (2022-06-25)
 
 
