@@ -132,9 +132,9 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
   const [{ isDragging }, drag, connectDrag] = useDrag<ISortableItemInternalData, any, any>({
     type,
     collect: (monitor) => {
-      const item = monitor.getItem();
+      // const item = monitor.getItem();
       const result = {
-        isDragging: monitor.isDragging() || item?.id === data.id,
+        isDragging: monitor.isDragging(), // || item?.id === data.id,
       };
       return result;
     },
@@ -180,7 +180,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
 
   useEffect(() => {
     if (preview) {
-      connectDrag(getEmptyImage(), { captureDraggingState: true });
+      connectDrag(getEmptyImage(), { captureDraggingState: false });
     } else {
       connectDrag(ref);
     }

@@ -30,7 +30,8 @@ const SortItem = memo(
   forwardRef((props: SortableItemProps<any> & any, ref: any) => {
     const { data, style, drag, className } = props;
     return (
-      <li className={className} style={{ ...defaultStyle, ...style }} ref={drag && drag(ref)}>
+      <li ref={ref} className={className} style={{ ...defaultStyle, ...style }}>
+        <div ref={drag}>拖拽点</div>
         {data.name}
       </li>
     );
