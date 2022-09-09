@@ -1,3 +1,12 @@
+## [0.1.38](https://github.com/limaofeng/asany-sortable/compare/v0.1.37...v0.1.38) (2022-09-09)
+
+
+### Bug Fixes
+
+* 解决 drag 类型错误问题 ([657c49e](https://github.com/limaofeng/asany-sortable/commit/657c49e523485550c41bac05fe4ad070c61c7d9c))
+
+
+
 ## [0.1.37](https://github.com/limaofeng/asany-sortable/compare/v0.1.36...v0.1.37) (2022-09-08)
 
 
