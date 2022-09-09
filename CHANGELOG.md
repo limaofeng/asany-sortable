@@ -1,3 +1,12 @@
+## [0.1.40](https://github.com/limaofeng/asany-sortable/compare/v0.1.39...v0.1.40) (2022-09-09)
+
+
+### Bug Fixes
+
+* 修复设置单独的拖拽点 ([fb8d4b8](https://github.com/limaofeng/asany-sortable/commit/fb8d4b8752ef112348c86fd5dd45d2f20408b905))
+
+
+
 ## [0.1.39](https://github.com/limaofeng/asany-sortable/compare/v0.1.38...v0.1.39) (2022-09-09)
 
 
