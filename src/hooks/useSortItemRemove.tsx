@@ -20,7 +20,7 @@ function useSortItemRemove(id: string) {
       target: sortableId,
       source: sortableId,
     });
-  }, [sortableId]);
+  }, [data, events, sortableId]);
   return handleRemove;
 }
 

@@ -1,5 +1,5 @@
-import { CSSProperties, RefCallback, RefObject, useCallback, useEffect, useReducer, useRef } from 'react';
-import { DragSourceMonitor, useDrag } from 'react-dnd';
+import { CSSProperties, RefObject, useCallback, useEffect, useReducer, useRef } from 'react';
+import { ConnectDragSource, DragSourceMonitor, useDrag } from 'react-dnd';
 import classnames from 'classnames';
 
 import { assign, sleep } from '../utils/index';
@@ -24,7 +24,7 @@ type SortItemState<RT extends HTMLElement> = [
     remove: () => void;
   },
   RefObject<RT>,
-  (ref: RefObject<any>) => RefCallback<any>
+  ConnectDragSource
 ];
 
 export type SortItemDragStartEvent = {
@@ -228,7 +228,7 @@ function useSortItem<T extends ISortableItem, RT extends HTMLElement>(
       }),
     },
     ref,
-    drag as any,
+    drag,
   ];
 }
 

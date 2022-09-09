@@ -1,15 +1,6 @@
 import { EventEmitter } from 'events';
-import {
-  CSSProperties,
-  FunctionComponent,
-  PropsWithoutRef,
-  MutableRefObject,
-  RefAttributes,
-  RefCallback,
-  RefObject,
-  ReactNode,
-} from 'react';
-import { DragSourceMonitor, DropTargetMonitor } from 'react-dnd';
+import { CSSProperties, FunctionComponent, PropsWithoutRef, MutableRefObject, RefAttributes, ReactNode } from 'react';
+import { ConnectDragSource, DragSourceMonitor, DropTargetMonitor } from 'react-dnd';
 
 export type SortableDirection = 'horizontal' | 'vertical';
 
@@ -230,7 +221,7 @@ export interface SortableItemProps<T extends ISortableItem = ISortableItem & { [
   update: (data: T & { [key: string]: any }) => void;
   className?: string;
   style?: CSSProperties;
-  drag: (ref: RefObject<any>) => RefCallback<any>;
+  drag: ConnectDragSource;
 }
 
 export type SortableItemRefObject =

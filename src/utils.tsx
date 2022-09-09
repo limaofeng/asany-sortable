@@ -100,7 +100,7 @@ export function getMonitorCoord(
       return NaN;
     },
     compare: (_: ICoord): Relation => {
-      throw '未实现逻辑';
+      throw new Error('未实现逻辑');
     },
   };
 }
@@ -206,11 +206,11 @@ export function getItemStyles(
     y += initialOffset.y;
   }
 
-  if (direction == 'vertical') {
+  if (direction === 'vertical') {
     x = initialOffset.x;
   }
 
-  if (direction == 'horizontal') {
+  if (direction === 'horizontal') {
     y = initialOffset.y;
   }
 
