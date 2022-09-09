@@ -1,3 +1,12 @@
+## [0.1.39](https://github.com/limaofeng/asany-sortable/compare/v0.1.38...v0.1.39) (2022-09-09)
+
+
+### Bug Fixes
+
+* 为预览div添加默认的class ([38a2b64](https://github.com/limaofeng/asany-sortable/commit/38a2b64741c974b6f8643faaa791d98bd6e45fd9))
+
+
+
 ## [0.1.38](https://github.com/limaofeng/asany-sortable/compare/v0.1.37...v0.1.38) (2022-09-09)
 
 
