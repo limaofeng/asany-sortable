@@ -263,8 +263,11 @@ export function dragPreview(
     const props = { data, drag: () => undefined, ...options } as any;
     if (!!options?.scale) {
       return (
-        <div style={style}>
-          <div style={getScaleItemStyles(style, typeof options.scale == 'function' ? options.scale() : options.scale)}>
+        <div className="sortable-drag-preview" style={style}>
+          <div
+            className="sortable-drag-preview-container"
+            style={getScaleItemStyles(style, typeof options.scale == 'function' ? options.scale() : options.scale)}
+          >
             {renderItem(itemRender, props)}
           </div>
         </div>
