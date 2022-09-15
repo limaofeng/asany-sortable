@@ -95,7 +95,7 @@ function Sortable<T extends ISortableItem>(
       rerender={rerender}
       items={items}
       pos={pos}
-      deps={[layout, allowDrop, tag, direction, className, draggable]}
+      deps={[layout, allowDrop, tag, direction, className, draggable, preview]}
     >
       <SortableCore
         tag={tag}
