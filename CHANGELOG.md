@@ -1,3 +1,12 @@
+## [0.1.41](https://github.com/limaofeng/asany-sortable/compare/v0.1.40...v0.1.41) (2022-09-15)
+
+
+### Features
+
+* 添加自定义拖拽预览与元素不可拖拽例子 ([c9f8540](https://github.com/limaofeng/asany-sortable/commit/c9f8540b2fe54f1a8ac12d18e09a7c03fb92cf17))
+
+
+
 ## [0.1.40](https://github.com/limaofeng/asany-sortable/compare/v0.1.39...v0.1.40) (2022-09-09)
 
 
