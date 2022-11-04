@@ -1,3 +1,12 @@
+## [0.1.43](https://github.com/limaofeng/asany-sortable/compare/v0.1.42...v0.1.43) (2022-11-04)
+
+
+### Bug Fixes
+
+* dragPreview 支持 offset 适当修正预览位置 ([6eca298](https://github.com/limaofeng/asany-sortable/commit/6eca2989cb053eaed8c1d6f35f569721c6468739))
+
+
+
 ## [0.1.42](https://github.com/limaofeng/asany-sortable/compare/v0.1.41...v0.1.42) (2022-11-04)
 
 
