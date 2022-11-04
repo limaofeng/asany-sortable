@@ -221,7 +221,7 @@ export function getItemStyles(
   };
 }
 
-export function getScaleItemStyles(style: CSSProperties, scale: number) {
+export function getScaleItemStyles(style: CSSProperties, scale: number, offset: [number, number] = [0, 0]) {
   if (scale >= 1) {
     return {
       transform: `scale(${scale})`,
@@ -231,8 +231,8 @@ export function getScaleItemStyles(style: CSSProperties, scale: number) {
   }
   const width = (style.width as number) * (1 / scale);
   const height = (style.height as number) * (1 / scale);
-  const x = -(((width as number) * (1 - scale)) / 2);
-  const y = -(((height as number) * (1 - scale)) / 2);
+  const x = -(((width as number) * (1 - scale)) / 2) + offset[0];
+  const y = -(((height as number) * (1 - scale)) / 2) + offset[1];
   return {
     transform: `translate(${x}px, ${y}px) scale(${scale})`,
     width: width,
@@ -257,7 +257,7 @@ export function renderItem(
 
 export function dragPreview(
   itemRender: SortableItemRender<any>,
-  options: { props?: any; scale?: number | (() => number) } = {}
+  options: { props?: any; offset?: [number, number]; scale?: number | (() => number) } = {}
 ): DragPreviewRenderer {
   return (data, { style }) => {
     const props = { data, drag: () => undefined, ...options } as any;
@@ -266,7 +266,11 @@ export function dragPreview(
         <div className="sortable-drag-preview" style={style}>
           <div
             className="sortable-drag-preview-container"
-            style={getScaleItemStyles(style, typeof options.scale == 'function' ? options.scale() : options.scale)}
+            style={getScaleItemStyles(
+              style,
+              typeof options.scale == 'function' ? options.scale() : options.scale,
+              options.offset
+            )}
           >
             {renderItem(itemRender, props)}
           </div>
