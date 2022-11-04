@@ -294,7 +294,13 @@ export type DragPreviewRenderer = (
 
 export type DragPreviewOptions =
   | DragPreviewRenderer
-  | { render: DragPreviewRenderer; axisLocked?: boolean; snapToGrid?: boolean; container?: Element | DocumentFragment };
+  | {
+      render: DragPreviewRenderer;
+      axisLocked?: boolean;
+      offset?: [number, number];
+      snapToGrid?: boolean;
+      container?: Element | DocumentFragment;
+    };
 
 export interface SortableProps<T extends ISortableItem = any> {
   mode?: Mode;

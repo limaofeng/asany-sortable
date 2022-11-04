@@ -19,6 +19,7 @@ const layerStyles: CSSProperties = {
 export interface CustomDragLayerProps {
   snapToGrid?: boolean;
   axisLocked?: boolean;
+  offset?: [number, number];
   render: DragPreviewRenderer;
   container?: Element | DocumentFragment;
   direction: SortableDirection;
@@ -49,6 +50,7 @@ const SortableDragLayer: FC<CustomDragLayerProps> = (props) => {
             initialOffset,
             currentOffset,
             !!props.snapToGrid,
+            props.offset,
             props.layout == 'list' && props.axisLocked && props.direction
           ),
           width: rect?.width,
