@@ -1,3 +1,12 @@
+## [0.1.42](https://github.com/limaofeng/asany-sortable/compare/v0.1.41...v0.1.42) (2022-11-04)
+
+
+### Bug Fixes
+
+* layer zIndex 10000 ([1c4e6da](https://github.com/limaofeng/asany-sortable/commit/1c4e6dad807997e2878e91b34153f1e0b41e4ac8))
+
+
+
 ## [0.1.41](https://github.com/limaofeng/asany-sortable/compare/v0.1.40...v0.1.41) (2022-09-15)
 
 
