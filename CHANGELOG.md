@@ -1,3 +1,12 @@
+## [0.1.44](https://github.com/limaofeng/asany-sortable/compare/v0.1.43...v0.1.44) (2022-11-04)
+
+
+### Bug Fixes
+
+* 预览 offset 逻辑调整 ([674032a](https://github.com/limaofeng/asany-sortable/commit/674032ad991d27a746889fdb66a27ed50bbf1aaf))
+
+
+
 ## [0.1.43](https://github.com/limaofeng/asany-sortable/compare/v0.1.42...v0.1.43) (2022-11-04)
 
 
