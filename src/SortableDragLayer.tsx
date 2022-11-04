@@ -9,7 +9,7 @@ import { getItemStyles } from './utils';
 const layerStyles: CSSProperties = {
   position: 'fixed',
   pointerEvents: 'none',
-  zIndex: 100,
+  zIndex: 10000,
   left: 0,
   top: 0,
   width: '100%',
