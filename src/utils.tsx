@@ -91,11 +91,17 @@ export function getMonitorCoord(
         }
         return my1 - y1;
       } else if (detection === 'horizontal' && (overlap as any).x) {
-        if (source[2] <= target[0]) {
-          return 1;
+        const mx1 = left + width / 2;
+        const my1 = top + height / 2;
+        if (width > w) {
+          overlap = isRectangleOverlap(currentRec, [x1, y1, x1, y1]);
         } else {
-          return -1;
+          overlap = isRectangleOverlap([mx1, my1, mx1, my1], target);
         }
+        if (!(overlap as any).x) {
+          return NaN;
+        }
+        return mx1 - x1;
       }
       return NaN;
     },

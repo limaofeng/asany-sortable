@@ -39,7 +39,7 @@ const SortableDragLayer: FC<CustomDragLayerProps> = (props) => {
   }));
 
   if (!isDragging) {
-    return null;
+    return <></>;
   }
 
   const dragLayer = (
@@ -64,7 +64,7 @@ const SortableDragLayer: FC<CustomDragLayerProps> = (props) => {
   );
 
   if (props.container) {
-    return ReactDOM.createPortal(dragLayer, props.container);
+    return ReactDOM.createPortal(dragLayer, props.container) as any;
   }
 
   return dragLayer;
